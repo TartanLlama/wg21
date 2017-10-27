@@ -35,7 +35,7 @@ public:
 };
 ```
 
-Neither the duplication or the delegation via const_cast are arguably great solutions, but they work.
+Neither the duplication or the delegation via `const_cast` are arguably great solutions, but they work.
 
 In C++11, member functions acquired a new axis to specialize on: ref-qualifiers. Now, instead of potentially needing two overloads of a single member function, we might need four: `&`, `const&`, `&&`, or `const&&`. We have three approaches to deal with this: we implement the same member four times, we can have three of the overloads delegate to the fourth, or we can have all four delegate to a helper, private static member function. One example might be the overload set for `optional<T>::value()`. The way to implement it would be something like:
 
@@ -149,7 +149,7 @@ private:
 };
 ```
 
-It's not like this is a complicated function. Far from. But more or less repeating the same code four times, or artificial delgation to avoid doing so, is the kind of thing that begs for a rewrite. Except we can't really. We _have_ to implement it this way. It seems like we should be able to abstract away the qualifiers. And we can... sort of. As a non-member function, we simply don't have this problem:
+It's not like this is a complicated function. Far from. But more or less repeating the same code four times, or artificial delegation to avoid doing so, is the kind of thing that begs for a rewrite. Except we can't really. We _have_ to implement it this way. It seems like we should be able to abstract away the qualifiers. And we can... sort of. As a non-member function, we simply don't have this problem:
 
 ```
 template <typename T>
@@ -172,36 +172,49 @@ There are many, many cases in code-bases where we need two or four overloads of 
 
 # Proposal
 
-This paper proposes a new way of declaring a member function that allows for deducing the type and value category of the instance parameter, while still being invokable as a member function.
+This paper proposes a new way of declaring a member function that will allow for deducing the type and value category of the class instance parameter, while still being invokable as a member function.
 
-We propose allowing the naming of the first parameter of a cv/ref-unqualified member function `this`, which shall be of reference type. The this parameter will be the explicit instance of class type, and can be deduced based on the qualification and value category of the class instance object on which the member function is invoked.
+We propose allowing the naming of the first parameter of a cv/ref-unqualified member function `this`, which shall be of reference type. The `this` parameter will bind to the implicit object argument, as if it were passed as the first argument to a non-member function with the same signature. 
 
 ```
 struct X {
     template <typename This>
-    void foo(This&& this);
+    void foo(This&& this, int i);
+};
 
+// X::foo is a member function taking one argument of type int
+X x;
+x.foo(0);
+
+// and is deduced as if the call were to this non-member function
+template <typename This>
+void foo(This&& obj, int i);
+foo(x, 0);
+```
+
+The usual template deduction rules apply to the `this` parameter. While the naming of the parameter `this` is significant, the naming of the template type parameter as `This` is not. It is used throughout merely a suggested convention.
+
+```
+struct Y {
     template <typename This, typename T>
     void bar(This&& this, T&& );
 
-    template <typename This>
-    void quux(This& this);
+    template <typename Self>
+    void quux(Self& this);
 };
 
-void demo(X x, const X* px) {
-    X{}.foo();    // invokes X::foo<X>
-    x.bar(4);     // invokes X::bar<X&, int>
-    px->bar(2.0); // invokes X::bar<const X&, double>
+void demo(Y y, const Y* py) {
+    y.bar(4);     // invokes Y::bar<Y&, int>
+    py->bar(2.0); // invokes Y::bar<const Y&, double>
 
-    X{}.quux();   // ill-formed
-    x.quux();     // invokes X::quux<X>
-    px->quux();   // invokes X::quux<const X>
+    Y{}.quux();   // ill-formed
+    y.quux();     // invokes Y::quux<Y>
+    py->quux();   // invokes Y::quux<const Y>
 }
 ```
+It will still be possible to take pointers to these member functions. Their types would be qualified based on the deduced qualification of the instance object. That is, `decltype(&Y::bar<Y, int>)` is `void (Y::*)(int) &&` and `decltype(&Y::quux<const Y>)` is `void (Y::*)() const&`. These member functions can be invoked via pointers to members as usual. 
 
-The type of this member function would be qualified based on the deduced qualification of the instance parameter. That is, `decltype(&X::foo<X>)` is `void (X::*)() &&` and `decltype(&X::bar<const X&, int>)` is `void (X::*)(int&& ) const&`. Similarly, `decltype(&X::quux<X>)` is void `(X::*)() &`.
-
-While the type of `this` is deduced, it will always be some qualified form of the class type in which the member function is declared, never a derived type:
+While the type of the `this` parameter is deduced, it will always be some qualified form of the class type in which the member function is declared, never a derived type:
 
 ```
 struct B {
@@ -212,10 +225,12 @@ struct B {
 struct D : B { };
 
 D d;
-d.do_stuff();        // invokes B::do_stuff<B&>, not B::do_stuff<D&>
+d.do_stuff();  // invokes B::do_stuff<B&>, not B::do_stuff<D&>
 ```
 
-Within these member functions, the keyword `this` will be used as a reference, not as a pointer. While inconsistent with usage in normal member functions, it is more consistent with its declaration as a parameter of reference type, and the difference will be a signal to users that this is a different kind of member function. Hence, accessing members would be done via `this.` and not `this->`. Due to these different access rules, all member access must be qualified. There will no longer be an implicit `this`:
+Within these member functions, the keyword `this` will be used as a reference, not as a pointer. While inconsistent with usage in normal member functions, it is more consistent with its declaration as a parameter of reference type and its ability to be deduced as a forwarding reference. This difference will be a signal to users that this is a different kind of member function, additionally obviating any questions about checking against `nullptr`. 
+
+Accessing members would be done via `this.mem` and not `this->mem`. There is no implicit `this` object, since we now have an _explicit_ instance parameter, so all member access must be qualified:
 
 ```
 template <typename T>
@@ -224,13 +239,13 @@ class Z {
 public:
     template <typename Object>
     decltype(auto) get(Object&& this) {
-        return value;                            // error
+        return value; // error: unknown identifier 'value'
         return std::forward<Object>(this).value; // ok
     }
 };
 ```
 
-While the examples so far all have this as a parameter whose type is deduced, this proposal does not enforce that. We will also allow simply naming the class type as the parameter type, as long as it's a reference type We do not expect this form to be used, but we likewise do not see the reason to limit the rule.
+While the examples so far all have `this` as a parameter whose type is deduced, we will also allow using the _injected-class-name_ as the type of the parameter. No other form will be allowed. We do not expect this form to be used very often, but likewise we see no reason to artificially limit the proposal to templates.
 
 ```
 struct A {
@@ -244,6 +259,24 @@ struct A {
 
     // error: this as a parameter must have reference type
     void foo(A* this) { std::cout << this->i; }
+};
+
+template <typename T>
+struct B {
+    // preferred
+    template <typename This>
+    void best(This&& this);
+
+    // ok
+    void good(B& this); 
+
+    // not supported: injected-class-name only
+    void bad1(B<T>& this);
+
+    // not supported: template parameter type must be of
+    // the form T& or T&& only
+    template <typename U>
+    void bad2(B<U*>& this);
 };
 ```
 
@@ -266,7 +299,7 @@ void demo(C* c, C const* d) {
 
 As `this` cannot be used as a parameter name today, this proposal is purely a language extension. All current syntax remains valid.
 
-# Alternative syntax
+## Alternative syntax
 
 Rather than naming the first parameter `this`, we can also consider introducing a dummy template parameter where the qualifications normally reside. This syntax is also ill-formed today, and is purely a language extension:
 
@@ -290,6 +323,8 @@ struct X {
 ```
 
 # Examples
+
+## Deduplicating Code
 
 This proposal can de-duplicate and de-quadruplicate a large amount of code. In each case, the single function is only slightly more complex than the initial two or four, which makes for a huge win. What follows are a few examples of how repeated code can be reduced.
 
@@ -539,9 +574,10 @@ Keep in mind that there are a few more functions in P0798 that have this lead to
 
 For those that dislike returning auto in these cases, it is very easy to write a metafunction that matches the appropriate qualifiers from a type. Certainly simpler than copying and pasting code and hoping that the minor changes were made correctly in every case.
 
-# SFINAE-friendly callables
 
-Another seemingly unrelated problem is that of writing these numerous overloads for function wrappers, as demonstrated in P0826. `std::not_fn` is specified to behave as if:
+## SFINAE-friendly callables
+
+A seemingly unrelated problem to the question of code quadruplication is that of writing these numerous overloads for function wrappers, as demonstrated in [P0826]. `std::not_fn` is specified to behave as if:
 
 ```
 template <typename F>
@@ -561,7 +597,7 @@ public:
 };
 ```
 
-which has the surprise result of incorrectly propagating the cv-qualifiers of the call wrapper:
+which has the surprise result of incorrectly propagating the cv-qualifiers of the call wrapper. From the paper:
 
 ```
 struct fun {
@@ -577,21 +613,62 @@ std::not_fn(fun{})(); // ok? Returns false
 
 `fun` shouldn't be invocable unless it's `const`, but the simple approach of quadruplicating the overloads led to a situation where we can fallback to the const overload of the call wrapper (the `&&`-qualified overload led to a substitution failure so we were able to fall back to the `const&&`-qualified one, which succeeded). Implementing this correctly, while still preserving SFINAE-friendliness, is decidedly non-trivial.
 
-This proposal, however, offers a very simple solution to this problem: deduce `this`:
+This proposal, however, offers a very simple solution to this problem. Deduce `this`. The following is a complete implementation of `std::not_fn`:
 
 ```
 template <typename F>
-class call_wrapper {
+struct call_wrapper {
     F f;
-public:
-    // ...
+
     template <typename This, typename... Args>
     auto operator()(This&& this, Args&&... )
-        -> decltype(!declval<invoke_result_t<match_qual_t<This, F>, Args...>>());
-    // ...
+        -> decltype(!invoke(forward<This>(this).f,
+                            forward<Args>(args)...));
+    {
+        return !invoke(forward<This>(this).f,
+                       forward<Args>(args)...);
+    }
 };
 
-std::not_fn(fun{})(); // error
+template <typename F>
+auto not_fn(F&& f) {
+    return call_wrapper<std::decay_t<F>>{std::forward<F>(f)};
+}
+
+not_fn(fun{})(); // error
 ```
 
-Here, there is only one overload with everything deduced together, with This = fun. As this overload is not viable (because fun is not invocable unless it's const), and there is no other overload, overload resolution is complete without a viable candidate. As desired.
+Here, there is only one overload with everything deduced together, with `This = fun`. As this overload is not viable (because `fun` is not invocable unless it's `const`), and there is no other overload, overload resolution is complete without a viable candidate. As desired.
+
+## Recursive Lambdas
+
+This proposal also allows for an alternative solution to implementing a recursive lambda, since now we open up the possibility of allowing a lambda to reference itself:
+
+```
+// as proposed in [P0839]
+auto fib = [] self (int n) {
+    if (n < 2) return n;
+    return self(n-1) + self(n-2);
+};
+
+// this proposal
+auto fib = [](auto& this, int n) {
+    if (n < 2) return n;
+    return this(n-1) + this(n-2);
+};
+```
+
+In the specific case of lambdas, a lambda could both capture `this` and take a generic parameter named `this`. If this happens, use of `this` would refer to the parameter (and hence, the lambda itself) and not the `this` pointer of the outer-most class. 
+
+```
+struct A {
+	int bar();
+
+    auto foo() {
+	    return [this](auto& this, int n) {
+		    return this->bar() + n; // error: no operator->() for this lambda
+	    };
+    }
+};
+```
+
