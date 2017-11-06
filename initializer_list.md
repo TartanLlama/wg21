@@ -142,6 +142,9 @@ Only that last case is inconsistent, which is somewhat unfortunate. However, in 
 
 # `std` vs. `std2`
 
+Given the last case in the previous section, and that lots of code using `std::vector` depends on its current form, this paper
+considers introducing this constructor to namespace `std2`.
+
 # Bikeshedding
 
 ## Alternative names
