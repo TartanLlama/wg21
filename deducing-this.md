@@ -864,3 +864,11 @@ If the lambda would otherwise decay to a function pointer, `&self` shall have th
 ```
 
 Within lambda expressions, the `this` parameter still does not allow one to refer to the members of the closure object, which has no defined storage or layout, nor do its members have names. Instead it allows one to deduce the value category of the lambda and access its members -- including various call operators -- in the way appropriate for the value category.
+
+# Acknowledgements
+
+The authors would like to thank:
+- Jon Wakely, for bringing us all together by pointing out we were writing the same paper, twice
+- Graham Heynes, Andrew Bennieston, Jeff Snyder for early feedback regarding the meaning of `this` inside function bodies
+- Jackie Chen, Vittorio Romeo, Tristan Brindle, for early feedback
+- Guilherme Hartmann for his guidance with the implementation
