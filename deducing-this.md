@@ -241,9 +241,34 @@ In other words, `X` is *not* a template parameter.
 
 The type of the parameter will be deduced as if it were the first parameter of a non-member function template and the implicit object parameter was passed as the first argument.
 
+### Deduction To Derived and CRTP
+
+Since the deduction rules for the `this` parameter stay unchanged, we can get rid of some of the reasons for CRTP (Curiously Recurring Template Pattern).
+
+Consider the following example:
+
+```
+struct B {
+    template <typename This>
+    void do_stuff(This&& this self);
+
+    template <typename T>
+    friend friend_do_stuff(T&& self);
+};
+
+struct D : B { };
+
+D d;
+
+friend_do_stuff(d); // invokes B::friend_do_stuff<D&>
+d.do_stuff();       // invokes B::do_stuff<D&>, not B::do_stuff<B&>
+```
+
+This obviates most needs for CRTP, since parent classes can now provide functions which return derived types by the simple process of template argument deduction. Obtaining the derived type is now easy, and the need for arcane techniques for informing the base class of the derived are largely superflous. (They are still needed for policies, but not `boost::operators`, for instance).
+
 ## What does `this` mean in the body of a member function?
 
-The behavior of \this is unchanged. The behavior of `self` is the same as a paramter declared without the `this` designator. The only difference is in how `self` is bound (to `*this`, and not to an explicitly provided parameter).
+The behavior of `this` is unchanged. The behavior of `self` is the same as a paramter declared without the `this` designator. The only difference is in how `self` is bound (to `*this`, and not to an explicitly provided parameter).
 
 ## Does this change overload resolution at all?
 
@@ -253,7 +278,7 @@ No. Non-templates still get priority over templates, et cetera.
 
 Other than the pass-by-value member functions, which currently do not have syntax to represent them, the explicit `this` signatures are aliases for those with trailing *cv-ref qualifiers*. They stand for the very same functions.
 
-This means that rewriting the function signature in a different style should not change the ABI of your class, and you should also be able to implement a member function that is forward-declared with one syntax using the other.
+This means that rewriting the function signature in a different style should not change either the ABI nor the API of your class, and you should also be able to implement a member function that is forward-declared with one syntax using the other.
 
 ## `this` in a variadic parameter pack
 
@@ -268,7 +293,7 @@ such a program is ill-formed.
 
 ## Constructors and Destructors
 
-No change to current rules. Currently, one cannot have different cv-ref versions of either, so you cannot designate any parameter with `this`.
+No change to current rules. Currently, one cannot have different cv-ref qualified versions of either, so you cannot designate any parameter with `this`.
 
 ## What about pass-by-value member functions?
 
@@ -366,15 +391,20 @@ It also works as a more obvious way to teach how `std::bind` and `std::function`
 
 ## ABI implications for `std::function` and related
 
-If references and pointers do not have the same representation for member functions, this effectively says "for the purposes of the `this`-designated first parameter, they do."
+The representation of references is not defined. This leads to the following
+constraint: if references and pointers do not have the same representation for member functions, this effectively says "for the purposes of the `this`-designated first parameter, they do."
 
 This matters because code written in the "`this` is a pointer" syntax with the `this->` notation needs to be assembly-identical to code written with the `self.` notation; the two are just different ways to implement a function with the same signature.
 
-## Interplays with capturing `[this]` and `[*this]`
+Note that since `this` is a pointer, one cannot overoad `operator->` for it, and
+therefore `this->` and `self.` are always equivalent expressions (at least until
+we get `operator.`)
+
+## Interplays with capturing `[this]` and `[*this]` in lambdas
 
 `this` just designates the parameter that is bound to the reference to the function object. It does not, in any way, change the meaning of `this`.
 
-If other language features play with what `this` means, they are completely orthogonal and do not have interplays with this proposal. However, it should be obvious that develpers have a great potential for introducing hard-to-read code if they are at all changing the meaning of `this`, especially in conjunction with this proposal.
+If other language features play with what `this` inside a function body means, they are completely orthogonal, and do not have interplays with this proposal, since this paper proposes no change to that behavior. However, it should be obvious that develpers already have a great potential for introducing hard-to-read code if they are at all changing the meaning of `this`, especially in conjunction with this proposal.
 
 ## Is `auto&& this self` allowed in member functions as well as lambdas?
 
