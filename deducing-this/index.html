@@ -2,7 +2,7 @@
  <head>
   <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
-  <title>d0847r0r0: Deducing this</title>
+  <title>p0847r0: Deducing this</title>
 <style data-fill-with="stylesheet">/******************************************************************************
  *                   Style sheet for the W3C specifications                   *
  *
@@ -1218,7 +1218,7 @@ Possible extra rowspan handling
     </style>
   <meta content="Bikeshed version 0d6a1c7475b7bb2485f411c7e73d9990fd0cfef5" name="generator">
   <link href="wg21.tartanllama.xyz/deducing-this" rel="canonical">
-  <meta content="dc09d146651abe4b29ab7371ab955392da219005" name="document-revision">
+  <meta content="4d8afd6fe155954506648a9696e641374c5a7ba1" name="document-revision">
 <style>/* style-md-lists */
 
 /* This is a weird hack for me not yet following the commonmark spec
@@ -1427,8 +1427,8 @@ pre .property::before, pre .property::after {
  <body class="h-entry">
   <div class="head">
    <p data-fill-with="logo"></p>
-   <h1 class="p-name no-ref" id="title">d0847r0r0<br>Deducing this</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Draft Proposal, <time class="dt-updated" datetime="2018-02-11">11 February 2018</time></span></h2>
+   <h1 class="p-name no-ref" id="title">p0847r0<br>Deducing this</h1>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Published Proposal, <time class="dt-updated" datetime="2018-02-11">11 February 2018</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1453,7 +1453,7 @@ pre .property::before, pre .property::after {
   </div>
   <div class="p-summary" data-fill-with="abstract">
    <h2 class="no-num no-toc no-ref heading settled" id="abstract"><span class="content">Abstract</span></h2>
-   <p>We propose a new mechanism for specifying the value category of an instance of a class, which is visible from inside a member function of that class -- in other words, a way to tell from within a member function whether one’s this points to an rvalue or an lvalue, and whether it is const or volatile.</p>
+   <p>We propose a new mechanism for specifying or deducing the value category of an instance of a class. In other words, a way to tell from within a member function whether the object it’s invoked on is an lvalue or an rvalue, and whether it is const or volatile.</p>
   </div>
   <nav data-fill-with="table-of-contents" id="toc">
    <h2 class="no-num no-toc no-ref" id="contents">Table of Contents</h2>

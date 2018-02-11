@@ -1,8 +1,8 @@
 <pre class='metadata'>
 Title: Deducing this
-Status: D
+Status: P
 ED: wg21.tartanllama.xyz/deducing-this
-Shortname: D0847R0
+Shortname: P0847
 Level: 0
 Editor: Gašper Ažman, gasper dot azman at gmail dot com
 Editor: Ben Deane, ben at elbeno dot com
@@ -12,7 +12,7 @@ Group: wg21
 Audience: EWG
 Markup Shorthands: markdown yes
 Default Highlight: C++
-Abstract: We propose a new mechanism for specifying the value category of an instance of a class, which is visible from inside a member function of that class -- in other words, a way to tell from within a member function whether one's this points to an rvalue or an lvalue, and whether it is const or volatile.
+Abstract: We propose a new mechanism for specifying or deducing the value category of an instance of a class. In other words, a way to tell from within a member function whether the object it's invoked on is an lvalue or an rvalue, and whether it is const or volatile.
 </pre>
 
 
