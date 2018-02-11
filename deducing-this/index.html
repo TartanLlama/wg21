@@ -1218,7 +1218,7 @@ Possible extra rowspan handling
     </style>
   <meta content="Bikeshed version 0d6a1c7475b7bb2485f411c7e73d9990fd0cfef5" name="generator">
   <link href="wg21.tartanllama.xyz/deducing-this" rel="canonical">
-  <meta content="3d46657485190c61c141b24e6e998160a3a708cd" name="document-revision">
+  <meta content="dc09d146651abe4b29ab7371ab955392da219005" name="document-revision">
 <style>/* style-md-lists */
 
 /* This is a weird hack for me not yet following the commonmark spec
@@ -1428,7 +1428,7 @@ pre .property::before, pre .property::after {
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref" id="title">d0847r0r0<br>Deducing this</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Draft Proposal, <time class="dt-updated" datetime="2017-11-27">27 November 2017</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Draft Proposal, <time class="dt-updated" datetime="2018-02-11">11 February 2018</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1439,9 +1439,9 @@ pre .property::before, pre .property::after {
      <dd>
       <dd class="editor p-author h-card vcard"><span class="p-name fn">Ben Deane</span> (<span class="p-org org">ben at elbeno dot com</span>)
      <dd>
-      <dd class="editor p-author h-card vcard"><a class="p-name fn u-email email" href="mailto:barry.revzin@gmail.com">Barry Revzin</a>
+      <dd class="editor p-author h-card vcard"><span class="p-name fn">Barry Revzin</span> (<span class="p-org org">barry dot revzin at gmail dot com</span>)
      <dd>
-      <dd class="editor p-author h-card vcard"><a class="p-name fn u-email email" href="mailto:simon@codeplay.com">Simon Brand</a>
+      <dd class="editor p-author h-card vcard"><span class="p-name fn">Simon Brand</span> (<span class="p-org org">simon at codeplay dot com</span>)
      <dt>Audience:
      <dd>EWG
      <dt>Project:
@@ -1462,38 +1462,34 @@ pre .property::before, pre .property::after {
     <li>
      <a href="#proposal"><span class="secno">2</span> <span class="content">Proposal</span></a>
      <ol class="toc">
-      <li><a href="#what-does-this-in-a-parameter-list-mean"><span class="secno">2.1</span> <span class="content">What Does <code class="highlight"><span class="k">this</span></code> in a Parameter List Mean?</span></a>
-      <li><a href="#how-does-a-templated-this-designated-parameter-work"><span class="secno">2.2</span> <span class="content">How does a templated <code class="highlight"><span class="k">this</span></code>-designated parameter work?</span></a>
-      <li><a href="#what-does-this-mean-in-the-body-of-a-member-function"><span class="secno">2.3</span> <span class="content">What does <code class="highlight"><span class="k">this</span></code> mean in the body of a member function?</span></a>
-      <li><a href="#does-this-change-overload-resolution-at-all"><span class="secno">2.4</span> <span class="content">Does this change overload resolution at all?</span></a>
-      <li><a href="#how-do-the-explicit-this-designated-parameter-and-the-current-trailing-cv-ref-qualifiers-interact"><span class="secno">2.5</span> <span class="content">How do the explicit <code class="highlight"><span class="k">this</span></code>-designated parameter and the current, trailing <em>cv-ref qualifiers</em> interact?</span></a>
-      <li><a href="#this-in-a-variadic-parameter-pack"><span class="secno">2.6</span> <span class="content"><code class="highlight"><span class="k">this</span></code> in a variadic parameter pack</span></a>
-      <li><a href="#constructors-and-destructors"><span class="secno">2.7</span> <span class="content">Constructors and Destructors</span></a>
-      <li><a href="#what-about-pass-by-value-member-functions"><span class="secno">2.8</span> <span class="content">What about pass-by-value member functions?</span></a>
-      <li><a href="#writing-the-function-pointer-types-for-such-functions"><span class="secno">2.9</span> <span class="content">Writing the function pointer types for such functions</span></a>
-      <li><a href="#virtual-and-this-as-value"><span class="secno">2.10</span> <span class="content"><code class="highlight"><span class="k">virtual</span></code> and <code class="highlight"><span class="k">this</span></code> as value</span></a>
-      <li><a href="#virtual-and-templated-member-functions"><span class="secno">2.11</span> <span class="content"><code class="highlight"><span class="k">virtual</span></code> and templated member functions</span></a>
-      <li><a href="#can-static-member-functions-have-a-this-parameter"><span class="secno">2.12</span> <span class="content">Can <code class="highlight"><span class="k">static</span></code> member functions have a <code class="highlight"><span class="k">this</span></code> parameter?</span></a>
-      <li><a href="#teachability-implications"><span class="secno">2.13</span> <span class="content">Teachability Implications</span></a>
-      <li><a href="#abi-implications-for-stdfunction-and-related"><span class="secno">2.14</span> <span class="content">ABI implications for <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">function</span></code> and related</span></a>
-      <li><a href="#interplays-with-capturing-this-and-this"><span class="secno">2.15</span> <span class="content">Interplays with capturing <code class="highlight"><span class="p">[</span><span class="k">this</span><span class="p">]</span></code> and <code class="highlight"><span class="p">[</span><span class="o">*</span><span class="k">this</span><span class="p">]</span></code></span></a>
-      <li><a href="#is-auto-this-self-allowed-in-member-functions-as-well-as-lambdas"><span class="secno">2.16</span> <span class="content">Is <code class="highlight"><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span></code> allowed in member functions as well as lambdas?</span></a>
-      <li><a href="#impact-on-the-standard"><span class="secno">2.17</span> <span class="content">Impact on the Standard</span></a>
-      <li><a href="#minimal-translations"><span class="secno">2.18</span> <span class="content">Minimal Translations</span></a>
-      <li><a href="#alternative-syntax"><span class="secno">2.19</span> <span class="content">Alternative syntax</span></a>
-      <li><a href="#unified-function-call-syntax"><span class="secno">2.20</span> <span class="content">Unified Function Call Syntax</span></a>
+      <li><a href="#name-lookup-candidate-functions"><span class="secno">2.1</span> <span class="content">Name lookup: candidate functions</span></a>
+      <li><a href="#type-deduction"><span class="secno">2.2</span> <span class="content">Type deduction</span></a>
+      <li><a href="#name-lookup-within-member-functions-with-explicit-object-parameters"><span class="secno">2.3</span> <span class="content">Name lookup: within member functions with explicit object parameters</span></a>
+      <li><a href="#by-value-explicit-object-parameters"><span class="secno">2.4</span> <span class="content">By-value explicit object parameters</span></a>
+      <li><a href="#writing-the-function-pointer-types-for-such-functions"><span class="secno">2.5</span> <span class="content">Writing the function pointer types for such functions</span></a>
+      <li><a href="#teachability-implications"><span class="secno">2.6</span> <span class="content">Teachability Implications</span></a>
+      <li><a href="#abi-implications-for-stdfunction-and-related"><span class="secno">2.7</span> <span class="content">ABI implications for <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">function</span></code> and related</span></a>
+      <li><a href="#virtual-and-this-as-value"><span class="secno">2.8</span> <span class="content"><code class="highlight"><span class="k">virtual</span></code> and <code class="highlight"><span class="k">this</span></code> as value</span></a>
+      <li><a href="#can-static-member-functions-have-a-this-parameter"><span class="secno">2.9</span> <span class="content">Can <code class="highlight"><span class="k">static</span></code> member functions have a <code class="highlight"><span class="k">this</span></code> parameter?</span></a>
+      <li><a href="#interplays-with-capturing-this-and-this-in-lambdas"><span class="secno">2.10</span> <span class="content">Interplays with capturing <code class="highlight"><span class="p">[</span><span class="k">this</span><span class="p">]</span></code> and <code class="highlight"><span class="p">[</span><span class="o">*</span><span class="k">this</span><span class="p">]</span></code> in lambdas</span></a>
+      <li><a href="#translating-code-to-use-explicit-object-parameters"><span class="secno">2.11</span> <span class="content">Translating code to use explicit object parameters</span></a>
+      <li><a href="#alternative-syntax"><span class="secno">2.12</span> <span class="content">Alternative syntax</span></a>
+      <li><a href="#unified-function-call-syntax"><span class="secno">2.13</span> <span class="content">Unified Function Call Syntax</span></a>
      </ol>
     <li>
      <a href="#real-world-examples"><span class="secno">3</span> <span class="content">Real-World Examples</span></a>
      <ol class="toc">
       <li><a href="#deduplicating-code"><span class="secno">3.1</span> <span class="content">Deduplicating Code</span></a>
-      <li><a href="#sfinae-friendly-callables"><span class="secno">3.2</span> <span class="content">SFINAE-friendly callables</span></a>
       <li>
-       <a href="#recursive-lambdas"><span class="secno">3.3</span> <span class="content">Recursive Lambdas</span></a>
+       <a href="#recursive-lambdas"><span class="secno">3.2</span> <span class="content">Recursive Lambdas</span></a>
        <ol class="toc">
-        <li><a href="#expressions-allowed-for-self-in-lambdas"><span class="secno">3.3.1</span> <span class="content">Expressions allowed for \self in lambdas</span></a>
+        <li><a href="#expressions-allowed-for-self-in-lambdas"><span class="secno">3.2.1</span> <span class="content">Expressions allowed for <code class="highlight"><span class="n">self</span></code> in lambdas</span></a>
+        <li><a href="#deducing-derived-objects-for-generic-lambdas"><span class="secno">3.2.2</span> <span class="content">Deducing derived objects for generic lambdas</span></a>
        </ol>
+      <li><a href="#crtp-without-the-c-r-or-even-t"><span class="secno">3.3</span> <span class="content">CRTP, without the C, R, or even T</span></a>
+      <li><a href="#sfinae-friendly-callables"><span class="secno">3.4</span> <span class="content">SFINAE-friendly callables</span></a>
      </ol>
+    <li><a href="#acknowledgements"><span class="secno">4</span> <span class="content">Acknowledgements</span></a>
    </ol>
   </nav>
   <main>
@@ -1642,19 +1638,19 @@ pre .property::before, pre .property::after {
    <p>This is great - it’s just one function, that handles all four cases for us. Except it’s a non-member function, not a member function. Different semantics, different syntax, doesn’t help.</p>
    <p>There are many, many cases in code-bases where we need two or four overloads of the same member function for different <code class="highlight"><span class="k">const</span></code>- or ref-qualifiers. More than that, there are likely many cases that a class should have four overloads of a particular member function, but doesn’t simply due to laziness by the developer. We think that there are sufficiently many such cases that they merit a better solution than simply: write it, then write it again, then write it two more times.</p>
    <h2 class="heading settled" data-level="2" id="proposal"><span class="secno">2. </span><span class="content">Proposal</span><a class="self-link" href="#proposal"></a></h2>
-   <p>We propose the ability to add an optional first parameter to any member function of a class <code class="highlight"><span class="n">T</span></code>, taking the form <code class="highlight"><span class="n">T</span> <span class="p">[</span><span class="k">const</span><span class="p">]</span> <span class="p">[</span><span class="k">volatile</span><span class="p">]</span> <span class="p">[</span><span class="o">&amp;|&amp;&amp;</span><span class="p">]</span> <span class="k">this</span> <span class="o">&lt;</span><span class="n">identifier</span><span class="o">></span></code>.</p>
-   <p>To facilitate use in generic lambda expressions, this may also be formulated as <code class="highlight"><span class="k">auto</span> <span class="p">[</span><span class="k">const</span><span class="p">]</span> <span class="p">[</span><span class="k">volatile</span><span class="p">]</span> <span class="p">[</span><span class="o">&amp;|&amp;&amp;</span><span class="p">]</span> <span class="k">this</span> <span class="o">&lt;</span><span class="n">identifier</span><span class="o">></span></code>.</p>
-   <p>In all cases, the value category of a so-defined <code class="highlight"><span class="n">identifier</span></code> inside the member function is exactly what the existing parameter rules would already imply. In other words, the <em>cv-ref qualifiers</em> that stand after the function signature now
-explicitly apply to the <code class="highlight"><span class="n">identifier</span></code> so designated with <code class="highlight"><span class="k">this</span></code>.</p>
+   <p>We propose a new way of declaring a member function that will allow for deducing the type and value category of the class instance parameter, while still being invocable as a member function. We introduce a new kind of parameter that can be provided as the first parameter to any member function: an explicit object parameter. The purpose of this parameter is to bind to the implicit object, allowing it to be deduced.</p>
+   <p>An explicit object parameter shall be of the form <code class="highlight"><span class="n">T</span> <span class="p">[</span><span class="k">const</span><span class="p">]</span> <span class="p">[</span><span class="k">volatile</span><span class="p">]</span> <span class="p">[</span><span class="o">&amp;|&amp;&amp;</span><span class="p">]</span> <span class="k">this</span> <span class="o">&lt;</span><span class="n">identifier</span><span class="o">></span></code>, where <code class="highlight"><span class="n">T</span></code> follows the normal rules of type names (e.g. for generic lambdas, it can be <code class="highlight"><span class="k">auto</span></code>), except that it cannot be a pointer type. Member functions with explicit object parameters cannot be <code class="highlight"><span class="k">static</span></code> or have <em>cv</em>- or <em>ref</em>-qualifiers.</p>
+   <p>The explicit object parameter can only be the first parameter of a function. It cannot be used in constructors or destructors.</p>
    <p>This is a strict extension to the language; all existing syntax remains valid.</p>
+   <p>For the purposes of this proposal, we assume the existence of two new library functions: a metafunction named <code class="highlight"><span class="n">like</span></code> which applies the <em>cv</em> and <em>ref</em> qualifiers from its first type argument onto its second (such that <code class="highlight"><span class="n">like_t</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&amp;</span><span class="p">,</span> <span class="kt">double</span><span class="o">></span></code> is <code class="highlight"><span class="kt">double</span><span class="o">&amp;</span></code>, <code class="highlight"><span class="n">like_t</span><span class="o">&lt;</span><span class="n">X</span> <span class="k">const</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">Y</span><span class="o">></span></code> is <code class="highlight"><span class="n">Y</span> <span class="k">const</span><span class="o">&amp;&amp;</span></code>, etc.), and a function template named <code class="highlight"><span class="n">forward_like</span></code> which allows you to forward based on the value category of an unrelated type (<code class="highlight"><span class="n">forward_like</span><span class="o">&lt;</span><span class="n">T</span><span class="o">></span><span class="p">(</span><span class="n">u</span><span class="p">)</span></code> is short-hand for <code class="highlight"><span class="n">forward</span><span class="o">&lt;</span><span class="n">like_t</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">U</span><span class="o">>></span><span class="p">(</span><span class="n">u</span><span class="p">)</span></code>). Sample implementations of both can be seen <a href="https://github.com/atomgalaxy/isocpp-template-this/blob/master/forward_like.cpp">here</a>.</p>
    <p>With this extension, the example from above can be written like so:</p>
 <pre class="highlight"><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">></span>
 <span class="k">class</span> <span class="nc">optional</span> <span class="p">{</span>
     <span class="c1">// ...</span>
 <span class="c1"></span>    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
-    <span class="k">decltype</span><span class="p">(</span><span class="k">auto</span><span class="p">)</span> <span class="n">value</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">decltype</span><span class="p">(</span><span class="k">auto</span><span class="p">)</span> <span class="n">value</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">o</span><span class="p">.</span><span class="n">has_value</span><span class="p">())</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="n">self</span><span class="p">).</span><span class="n">m_value</span><span class="p">;</span>
+            <span class="k">return</span> <span class="n">forward_like</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">).</span><span class="n">m_value</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">throw</span> <span class="n">bad_optional_access</span><span class="p">();</span>
     <span class="p">}</span>
@@ -1662,108 +1658,163 @@ explicitly apply to the <code class="highlight"><span class="n">identifier</span
 <span class="c1"></span><span class="p">};</span>
 </pre>
    <p>We believe that the ability to write <em>cv-ref qualifier</em>-aware member functions without duplication will improve code maintainability, decrease the likelihood of bugs, and allow users to write fast, correct code more easily.</p>
-   <h3 class="heading settled" data-level="2.1" id="what-does-this-in-a-parameter-list-mean"><span class="secno">2.1. </span><span class="content">What Does <code class="highlight"><span class="k">this</span></code> in a Parameter List Mean?</span><a class="self-link" href="#what-does-this-in-a-parameter-list-mean"></a></h3>
-   <p>Effectively, <code class="highlight"><span class="k">this</span></code> denotes a parameter, that otherwise behaves completely normally, to be the parameter that <code class="highlight"><span class="o">*</span><span class="k">this</span></code> refers to. The name of this parameter follows the general rules for parameter naming, but shall be referred to as <code class="highlight"><span class="n">self</span></code> for the remainder of this paper.</p>
-   <p>The entries of this table should be read as if they are inside a class <code class="highlight"><span class="n">X</span></code>:</p>
-<pre class="highlight"><span class="k">class</span> <span class="nc">X</span> <span class="p">{</span> <span class="cm">/* entry */</span> <span class="p">};</span>
-</pre>
-   <p>In other words, <code class="highlight"><span class="n">X</span></code> is <em>not</em> a template parameter.</p>
+   <p>What follows is a description of how explicit object parameters affect all the important language constructs: name lookup, type deduction, overload resolution, and so forth.</p>
+   <h3 class="heading settled" data-level="2.1" id="name-lookup-candidate-functions"><span class="secno">2.1. </span><span class="content">Name lookup: candidate functions</span><a class="self-link" href="#name-lookup-candidate-functions"></a></h3>
+   <p>Today, when either invoking a named function or an operator (including the call operator) on an object of class type, name lookup will include both static and non-static member functions found by regular class lookup. Non-static member functions are treated as if there were an implicit object parameter whose type is an lvalue or rvalue reference to <em>cv</em> <code class="highlight"><span class="n">X</span></code> (where the reference and <em>cv</em> qualifiers are determined based on the function’s qualifiers) which binds to the object on which the function was invoked. For static member functions, the implicit object parameter is effectively discarded, so will not be mentioned further.</p>
+   <p>For non-static member functions with the new <strong>explicit</strong> object parameter, lookup will work the same way as other member functions today, except rather than implicitly determining the type of the object parameter based on the <em>cv</em>- and <em>ref</em>-qualifiers of the member function, these are set by the parameter itself. The following examples illustrate this concept. Note that the explicit object parameter does not need to be named:</p>
    <table>
     <tbody>
      <tr>
-      <th><strong>written as</strong> 
-      <th><strong>C++17 signature</strong> 
-      <th><strong>comments</strong> 
+      <th>C++17
+      <th>With Explicit Object
      <tr>
-      <td><code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">(</span><span class="n">X</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span></code> 
-      <td>currently not available 
-      <td> [value] 
-     <tr>
-      <td><code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">(</span><span class="n">X</span><span class="o">&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span></code> 
-      <td><code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">()</span> <span class="o">&amp;</span></code> 
       <td>
-     <tr>
-      <td><code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">(</span><span class="n">X</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span></code> 
-      <td><code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">()</span> <span class="o">&amp;&amp;</span></code> 
-      <td>
-     <tr>
-      <td><code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">(</span><span class="n">X</span> <span class="k">const</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span></code> 
-      <td>currently not available 
-      <td> [value] 
-     <tr>
-      <td><code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">(</span><span class="n">X</span> <span class="k">const</span><span class="o">&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span></code> 
-      <td><code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">()</span> <span class="k">const</span><span class="o">&amp;</span></code> 
-      <td>
-     <tr>
-      <td><code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">(</span><span class="n">X</span> <span class="k">const</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span></code> 
-      <td><code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">()</span> <span class="k">const</span><span class="o">&amp;&amp;</span></code> 
-      <td>
-     <tr>
-      <td><code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">(</span><span class="n">X</span> <span class="k">volatile</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span></code> 
-      <td>currently not available 
-      <td> [value] 
-     <tr>
-      <td><code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">(</span><span class="n">X</span> <span class="k">volatile</span><span class="o">&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span></code> 
-      <td><code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">()</span> <span class="k">volatile</span><span class="o">&amp;</span></code> 
-      <td>
-     <tr>
-      <td><code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">(</span><span class="n">X</span> <span class="k">volatile</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span></code> 
-      <td><code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">()</span> <span class="k">volatile</span><span class="o">&amp;</span></code> 
-      <td>
-     <tr>
-      <td><code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">(</span><span class="n">X</span> <span class="k">const</span> <span class="k">volatile</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span></code> 
-      <td>currently not available 
-      <td> [value] 
-     <tr>
-      <td><code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">(</span><span class="n">X</span> <span class="k">const</span> <span class="k">volatile</span><span class="o">&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span></code> 
-      <td><code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">()</span> <span class="k">const</span> <span class="k">volatile</span><span class="o">&amp;</span></code> 
-      <td>
-     <tr>
-      <td><code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">(</span><span class="n">X</span> <span class="k">const</span> <span class="k">volatile</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span></code> 
-      <td><code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">()</span> <span class="k">const</span> <span class="k">volatile</span><span class="o">&amp;&amp;</span></code> 
-      <td>
-   </table>
-   <ul>
-    <li data-md="">
-     <p><em>[value]</em>: whether passing by value should be allowed is debatable, but seems desirable for completeness and parity with inline friend functions.</p>
-    <li data-md="">
-     <p>The interpretation of <code class="highlight"><span class="k">this</span></code> in the member function body is always the same -- it points to the same object <code class="highlight"><span class="n">self</span></code> references.</p>
-    <li data-md="">
-     <p><code class="highlight"><span class="n">self</span></code> is _not_ a reserved identifier -- instead, just a conventional naming. Any valid identifier is valid instead of <code class="highlight"><span class="n">self</span></code> (as is, for parity with the rest of the language, no name, since parameter names are optional).</p>
-    <li data-md="">
-     <p><code class="highlight"><span class="n">self</span></code>, where it is visible, behaves exactly as a parameter declared without <code class="highlight"><span class="k">this</span></code>. The only difference is in the call syntax. This means that type deduction, use in <code class="highlight"><span class="k">decltype</span></code> for trailing return types etc., and use within the function body are completely unsurprising.</p>
-    <li data-md="">
-     <p>As now, only one definition for a given signature may be present -- e.g. one may define at most one of <code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">()</span></code>, <code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">()</span><span class="o">&amp;</span></code>, or <code class="highlight"><span class="kt">void</span> <span class="n">f</span><span class="p">(</span><span class="n">X</span><span class="o">&amp;</span> <span class="k">this</span><span class="p">)</span></code>. The first two are already exclusive of each other, we merely add a third way to define the very same method.</p>
-   </ul>
-   <h3 class="heading settled" data-level="2.2" id="how-does-a-templated-this-designated-parameter-work"><span class="secno">2.2. </span><span class="content">How does a templated <code class="highlight"><span class="k">this</span></code>-designated parameter work?</span><a class="self-link" href="#how-does-a-templated-this-designated-parameter-work"></a></h3>
-   <p>The type of the parameter will be deduced as if it were the first parameter of a non-member function template and the implicit object parameter was passed as the first argument.</p>
-   <h3 class="heading settled" data-level="2.3" id="what-does-this-mean-in-the-body-of-a-member-function"><span class="secno">2.3. </span><span class="content">What does <code class="highlight"><span class="k">this</span></code> mean in the body of a member function?</span><a class="self-link" href="#what-does-this-mean-in-the-body-of-a-member-function"></a></h3>
-   <p>The behavior of \this is unchanged. The behavior of <code class="highlight"><span class="n">self</span></code> is the same as a paramter declared without the <code class="highlight"><span class="k">this</span></code> designator. The only difference is in how <code class="highlight"><span class="n">self</span></code> is bound (to <code class="highlight"><span class="o">*</span><span class="k">this</span></code>, and not to an explicitly provided parameter).</p>
-   <h3 class="heading settled" data-level="2.4" id="does-this-change-overload-resolution-at-all"><span class="secno">2.4. </span><span class="content">Does this change overload resolution at all?</span><a class="self-link" href="#does-this-change-overload-resolution-at-all"></a></h3>
-   <p>No. Non-templates still get priority over templates, et cetera.</p>
-   <h3 class="heading settled" data-level="2.5" id="how-do-the-explicit-this-designated-parameter-and-the-current-trailing-cv-ref-qualifiers-interact"><span class="secno">2.5. </span><span class="content">How do the explicit <code class="highlight"><span class="k">this</span></code>-designated parameter and the current, trailing <em>cv-ref qualifiers</em> interact?</span><a class="self-link" href="#how-do-the-explicit-this-designated-parameter-and-the-current-trailing-cv-ref-qualifiers-interact"></a></h3>
-   <p>Other than the pass-by-value member functions, which currently do not have syntax to represent them, the explicit <code class="highlight"><span class="k">this</span></code> signatures are aliases for those with trailing <em>cv-ref qualifiers</em>. They stand for the very same functions.</p>
-   <p>This means that rewriting the function signature in a different style should not change the ABI of your class, and you should also be able to implement a member function that is forward-declared with one syntax using the other.</p>
-   <h3 class="heading settled" data-level="2.6" id="this-in-a-variadic-parameter-pack"><span class="secno">2.6. </span><span class="content"><code class="highlight"><span class="k">this</span></code> in a variadic parameter pack</span><a class="self-link" href="#this-in-a-variadic-parameter-pack"></a></h3>
-   <p>Given the fact that there is no obvious meaning to the expression</p>
 <pre class="highlight"><span class="k">struct</span> <span class="n">X</span> <span class="p">{</span>
-  <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span> <span class="n">Ts</span><span class="o">></span>
-  <span class="kt">void</span> <span class="n">f</span><span class="p">(</span><span class="n">Ts</span><span class="p">...</span> <span class="k">this</span> <span class="n">selves</span><span class="p">);</span>
+    <span class="c1">// implicit object has type X&amp;</span>
+<span class="c1"></span>    <span class="kt">void</span> <span class="n">foo</span><span class="p">();</span>
+
+    <span class="c1">// implicit object has type X const&amp;</span>
+<span class="c1"></span>    <span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+
+    <span class="c1">// implicit object has type X&amp;&amp;</span>
+<span class="c1"></span>    <span class="kt">void</span> <span class="nf">bar</span><span class="p">()</span> <span class="o">&amp;&amp;</span><span class="p">;</span>
+
+    <span class="cm">/* ex_baz has no C++17 equivalent */</span>
 <span class="p">};</span>
 </pre>
-   such a program is ill-formed. 
-   <h3 class="heading settled" data-level="2.7" id="constructors-and-destructors"><span class="secno">2.7. </span><span class="content">Constructors and Destructors</span><a class="self-link" href="#constructors-and-destructors"></a></h3>
-   <p>No change to current rules. Currently, one cannot have different cv-ref versions of either, so you cannot designate any parameter with <code class="highlight"><span class="k">this</span></code>.</p>
-   <h3 class="heading settled" data-level="2.8" id="what-about-pass-by-value-member-functions"><span class="secno">2.8. </span><span class="content">What about pass-by-value member functions?</span><a class="self-link" href="#what-about-pass-by-value-member-functions"></a></h3>
-   <p>We think they are a logical extension of the mechanism, and would go a long way towards making member functions as powerful as inline friend functions, with the only difference being the call syntax.</p>
-   <p>One implication of this is that the <code class="highlight"><span class="k">this</span></code> parameter would be move-constructed in cases where the object is an rvalue, allowing you to treat chained builder member functions that return a new object uniformly without having to resort to templates.</p>
-   <p><em>Example</em>:</p>
+      <td>
+<pre class="highlight"><span class="k">struct</span> <span class="n">X</span> <span class="p">{</span>
+    <span class="c1">// explicit object, named self, has type X&amp;</span>
+<span class="c1"></span>    <span class="kt">void</span> <span class="n">ex_foo</span><span class="p">(</span><span class="n">X</span><span class="o">&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">);</span>
+
+    <span class="c1">// explicit object, named self, has type X const&amp;</span>
+<span class="c1"></span>    <span class="kt">void</span> <span class="nf">ex_foo</span><span class="p">(</span><span class="n">X</span> <span class="k">const</span><span class="o">&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">);</span>
+
+    <span class="c1">// explicit object, unnamed, has type X&amp;&amp;</span>
+<span class="c1"></span>    <span class="kt">void</span> <span class="nf">ex_bar</span><span class="p">(</span><span class="n">X</span><span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">);</span>
+
+    <span class="c1">// explicit object, unnamed, has type X</span>
+<span class="c1"></span>    <span class="c1">// copied or moved from original object</span>
+<span class="c1"></span>    <span class="kt">void</span> <span class="nf">ex_baz</span><span class="p">(</span><span class="n">X</span> <span class="k">this</span><span class="p">);</span>
+<span class="p">};</span>
+</pre>
+   </table>
+   <p>The overload resolution rules for this new set of candidate functions remains unchanged - we’re simply being explicit rather than implicit about the object parameter. Given a call to <code class="highlight"><span class="n">x</span><span class="p">.</span><span class="n">ex_foo</span><span class="p">()</span></code>, overload resolution would select the first <code class="highlight"><span class="n">ex_foo</span><span class="p">()</span></code> overload if <code class="highlight"><span class="n">x</span></code> isn’t <code class="highlight"><span class="k">const</span></code> and the second if it is.</p>
+   <p>Since the first parameter in member functions that have an explicit object parameter binds to the class object on which the member function is being invoked, the first provided argument is used to initialize the second function parameter, if any:</p>
+<pre class="highlight"><span class="k">struct</span> <span class="n">C</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">get</span><span class="p">(</span><span class="n">C</span> <span class="k">const</span><span class="o">&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">,</span> <span class="kt">int</span> <span class="n">i</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="n">C</span> <span class="n">c</span><span class="p">;</span>
+<span class="n">c</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span> <span class="c1">// self is a C const&amp;, initialized to c</span>
+<span class="c1"></span>          <span class="c1">// i is initialized with 4</span>
+</pre>
+   <h3 class="heading settled" data-level="2.2" id="type-deduction"><span class="secno">2.2. </span><span class="content">Type deduction</span><a class="self-link" href="#type-deduction"></a></h3>
+   <p>One of the main motivations of this proposal is to deduce the <em>cv</em>-qualifiers and value category of the class object, so the explicit object parameter needs to be deducible. We do not propose any change in the template deduction rules for member functions with explicit object parameters - it will just be deduced from the class object the same way as any other function parameter:</p>
+<pre class="highlight"><span class="k">struct</span> <span class="n">X</span> <span class="p">{</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
+    <span class="kt">void</span> <span class="n">foo</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">,</span> <span class="kt">int</span> <span class="n">i</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="n">X</span> <span class="n">x</span><span class="p">;</span>
+<span class="n">x</span><span class="p">.</span><span class="n">foo</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span> <span class="c1">// Self deduces as X&amp;</span>
+<span class="c1"></span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">x</span><span class="p">).</span><span class="n">foo</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span> <span class="c1">// Self deduces as X</span>
+</pre>
+   <p>Since deduction rules do not change, and the explicit object parameter is deduced from the object the function is called on, this has the interesting effect of possibly deducing derived types, which can best be illustrated by the following example:</p>
+<pre class="highlight"><span class="k">struct</span> <span class="n">B</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
+    <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">get</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// NB: specifically self.i, not just i or this->i</span>
+<span class="c1"></span>        <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="n">i</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nl">D</span> <span class="p">:</span> <span class="n">B</span> <span class="p">{</span>
+    <span class="c1">// shadows B::i</span>
+<span class="c1"></span>    <span class="kt">double</span> <span class="n">i</span> <span class="o">=</span> <span class="mf">3.14</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="n">B</span> <span class="n">b</span><span class="p">{};</span>
+<span class="n">B</span> <span class="k">const</span> <span class="n">cb</span><span class="p">{};</span>
+<span class="n">D</span> <span class="n">d</span><span class="p">{};</span>
+
+<span class="n">b</span><span class="p">.</span><span class="n">foo</span><span class="p">();</span>            <span class="c1">// #1</span>
+<span class="c1"></span><span class="n">cb</span><span class="p">.</span><span class="n">foo</span><span class="p">();</span>           <span class="c1">// #2</span>
+<span class="c1"></span><span class="n">d</span><span class="p">.</span><span class="n">foo</span><span class="p">();</span>            <span class="c1">// #3</span>
+<span class="c1"></span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">d</span><span class="p">).</span><span class="n">foo</span><span class="p">();</span> <span class="c1">// #4</span>
+</pre>
+   <p>The proposed behavior of these calls is:</p>
+   <ol>
+    <li data-md="">
+     <p><code class="highlight"><span class="n">Self</span></code> is deduced as <code class="highlight"><span class="n">B</span><span class="o">&amp;</span></code>, this call returns an <code class="highlight"><span class="kt">int</span><span class="o">&amp;</span></code> to <code class="highlight"><span class="n">B</span><span class="o">::</span><span class="n">i</span></code></p>
+    <li data-md="">
+     <p><code class="highlight"><span class="n">Self</span></code> is deduced as <code class="highlight"><span class="n">B</span> <span class="k">const</span><span class="o">&amp;</span></code>, this calls returns an <code class="highlight"><span class="kt">int</span> <span class="k">const</span><span class="o">&amp;</span></code> to <code class="highlight"><span class="n">B</span><span class="o">::</span><span class="n">i</span></code></p>
+    <li data-md="">
+     <p><code class="highlight"><span class="n">Self</span></code> is deduced as <code class="highlight"><span class="n">D</span><span class="o">&amp;</span></code>, this call returns a <code class="highlight"><span class="kt">double</span><span class="o">&amp;</span></code> to <code class="highlight"><span class="n">D</span><span class="o">::</span><span class="n">i</span></code></p>
+    <li data-md="">
+     <p><code class="highlight"><span class="n">Self</span></code> is deduced as <code class="highlight"><span class="n">D</span></code>, this call returns a <code class="highlight"><span class="kt">double</span><span class="o">&amp;&amp;</span></code> to <code class="highlight"><span class="n">D</span><span class="o">::</span><span class="n">i</span></code></p>
+   </ol>
+   <p>When we deduce the object parameter, we don’t just deduce the <em>cv</em>- and <em>ref</em>-qualifiers. We may also get a derived type. This follows from the normal template deduction rules. In <code class="highlight"><span class="cp">#3</span></code>, for instance, the object parameter is an lvalue of type <code class="highlight"><span class="n">D</span></code>, so <code class="highlight"><span class="n">Self</span></code> deduces as <code class="highlight"><span class="n">D</span><span class="o">&amp;</span></code>.</p>
+   <h3 class="heading settled" data-level="2.3" id="name-lookup-within-member-functions-with-explicit-object-parameters"><span class="secno">2.3. </span><span class="content">Name lookup: within member functions with explicit object parameters</span><a class="self-link" href="#name-lookup-within-member-functions-with-explicit-object-parameters"></a></h3>
+   <p>So far, we’ve only considered how member functions with explicit object parameters get found with name lookup and how they deduce that parameter. Now let’s move on to how the bodies of these functions actually behave. Consider a slightly expanded version of the previous example:</p>
+<pre class="highlight"><span class="k">struct</span> <span class="n">B</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
+    <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">f1</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">i</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
+    <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">f2</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="o">-></span><span class="n">i</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
+    <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">f3</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">).</span><span class="n">i</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
+    <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">f4</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="n">self</span><span class="p">).</span><span class="n">i</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nl">D</span> <span class="p">:</span> <span class="n">B</span> <span class="p">{</span>
+    <span class="kt">double</span> <span class="n">i</span> <span class="o">=</span> <span class="mf">3.14</span><span class="p">;</span>
+<span class="p">};</span>
+</pre>
+   <p>Consider invoking each of these functions with an lvalue of type <code class="highlight"><span class="n">D</span></code>. We have no interest in changing template deduction rules, which means that <code class="highlight"><span class="n">Self</span></code> in each case will be <code class="highlight"><span class="n">D</span><span class="o">&amp;</span></code>. We have several options:</p>
+   <ol>
+    <li data-md="">
+     <p><code class="highlight"><span class="k">this</span></code> is a <code class="highlight"><span class="n">B</span><span class="o">*</span></code> (non-<code class="highlight"><span class="k">const</span></code> because the explicit object parameter is non-<code class="highlight"><span class="k">const</span></code>), unqualified lookup looks in <code class="highlight"><span class="n">B</span></code>'s scope first. This means that <code class="highlight"><span class="n">f1</span></code> returns an <code class="highlight"><span class="kt">int</span><span class="o">&amp;</span></code> (to <code class="highlight"><span class="n">B</span><span class="o">::</span><span class="n">i</span></code>) and <code class="highlight"><span class="n">f2</span></code> returns an <code class="highlight"><span class="kt">int</span><span class="o">&amp;</span></code>. <code class="highlight"><span class="n">f3</span></code> is ill-formed, because <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;></span></code> takes a <code class="highlight"><span class="n">D</span><span class="o">&amp;</span></code> and we’re passing in a <code class="highlight"><span class="n">B</span><span class="o">&amp;</span></code>, which is not a conversion that can be done implicitly. <code class="highlight"><span class="n">f4</span></code> returns a <code class="highlight"><span class="kt">double</span><span class="o">&amp;</span></code> to <code class="highlight"><span class="n">D</span><span class="o">::</span><span class="n">i</span></code>, because while <code class="highlight"><span class="o">*</span><span class="k">this</span></code> is a <code class="highlight"><span class="n">B</span></code>, <code class="highlight"><span class="n">self</span></code> actually is the object parameter, hence is a <code class="highlight"><span class="n">D</span></code>.</p>
+    <li data-md="">
+     <p><code class="highlight"><span class="k">this</span></code> is a <code class="highlight"><span class="n">D</span><span class="o">*</span></code> (non-<code class="highlight"><span class="k">const</span></code>), but unqualified lookup looks in <code class="highlight"><span class="n">B</span></code>'s scope. This means that <code class="highlight"><span class="n">f1</span></code> returns an <code class="highlight"><span class="kt">int</span><span class="o">&amp;</span></code>, but <code class="highlight"><span class="n">f2</span></code> returns a <code class="highlight"><span class="kt">double</span><span class="o">&amp;</span></code>. <code class="highlight"><span class="n">f3</span></code> and <code class="highlight"><span class="n">f4</span></code> both return <code class="highlight"><span class="kt">double</span><span class="o">&amp;</span></code>.</p>
+    <li data-md="">
+     <p><code class="highlight"><span class="k">this</span></code> is a <code class="highlight"><span class="n">D</span><span class="o">*</span></code> and unqualified lookup looks in <code class="highlight"><span class="n">D</span></code>'s scope too. All four functions return a <code class="highlight"><span class="kt">double</span><span class="o">&amp;</span></code>.</p>
+    <li data-md="">
+     <p>While the previous three options are variations on these functions behaving as non-static member functions, we could instead also consider these functions to behave as either static member functions or non-member <code class="highlight"><span class="k">friend</span></code> functions. In this case, any member access would require direct access from the explicit object parameter, so <code class="highlight"><span class="n">f1</span></code>, <code class="highlight"><span class="n">f2</span></code>, and <code class="highlight"><span class="n">f3</span></code> are all ill-formed. <code class="highlight"><span class="n">f4</span></code> returns a <code class="highlight"><span class="kt">double</span><span class="o">&amp;</span></code>.</p>
+   </ol>
+   <p>In our view, options 2 and 3 are too likely to be lead to programmer errors, even by experts. It would be very surprising if <code class="highlight"><span class="n">f1</span></code> didn’t return <code class="highlight"><span class="n">B</span><span class="o">::</span><span class="n">i</span></code>, or if <code class="highlight"><span class="n">f1</span></code> and <code class="highlight"><span class="n">f2</span></code> behaved differently. Option 4 is interesting, but would be more verbose without clear benefit.</p>
+   <p>We favor option 1, since <code class="highlight"><span class="n">f1</span></code>, <code class="highlight"><span class="n">f2</span></code> and <code class="highlight"><span class="n">f4</span></code> all end up having behavior that is reasonable given the other rules for name lookup we already have. <code class="highlight"><span class="n">f2</span></code> and <code class="highlight"><span class="n">f4</span></code> returning different things might appear strange at first glance, but <code class="highlight"><span class="n">f2</span></code> references <code class="highlight"><span class="k">this</span><span class="o">-></span><span class="n">i</span></code> and <code class="highlight"><span class="n">f4</span></code> references <code class="highlight"><span class="n">self</span><span class="p">.</span><span class="n">i</span></code> - programmers would have to be aware that these may be different. Where this option could go wrong is <code class="highlight"><span class="n">f3</span></code>, which looks like it yields an lvalue or rvalue reference to <code class="highlight"><span class="n">B</span><span class="o">::</span><span class="n">i</span></code> but is actually casting <code class="highlight"><span class="o">*</span><span class="k">this</span></code> to a derived object. But since this is ill-formed, this is a <em>compile</em> error rather than a runtime bug. Hence, not only do we get typically expected behavior, but we’re also protected from a potential source of error by the compiler.</p>
+   <p>The proper way to implement forwarding is to use one of the two hypothetical library functions mentioned earlier:</p>
+<pre class="highlight"><span class="k">struct</span> <span class="n">B</span> <span class="p">{</span>
+    <span class="k">template</span> <span class="o">&lt;</span> <span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
+    <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">f3</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">).</span><span class="n">i</span><span class="p">;</span>            <span class="c1">// ok if Self and *this are the same type</span>
+<span class="c1"></span>                                                       <span class="c1">// compile other if Self is a derived type</span>
+<span class="c1"></span>
+        <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">like_t</span><span class="o">&lt;</span><span class="n">Self</span><span class="p">,</span> <span class="n">B</span><span class="o">>></span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">).</span><span class="n">i</span><span class="p">;</span> <span class="c1">// always ok</span>
+<span class="c1"></span>        <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">forward_like</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">).</span><span class="n">i</span><span class="p">;</span>       <span class="c1">// always ok</span>
+<span class="c1"></span>    <span class="p">}</span>
+<span class="p">};</span>
+</pre>
+   <p>The rule that we’re establishing is that <code class="highlight"><span class="k">this</span></code> remains a pointer to the class type of the member function it is used in, and unqualified lookup looks in class scope as usual. Additionally, <code class="highlight"><span class="k">this</span></code> is either a pointer to the explicit object parameter or, in the case of deducing a derived type, one of its base class subobjects.</p>
+   <h3 class="heading settled" data-level="2.4" id="by-value-explicit-object-parameters"><span class="secno">2.4. </span><span class="content">By-value explicit object parameters</span><a class="self-link" href="#by-value-explicit-object-parameters"></a></h3>
+   <p>We think they are a logical extension of the mechanism, and would go a long way towards making member functions as powerful as inline friend functions, with the only difference being the call syntax. One implication of this is that the explicit object parameter would be move-constructed in cases where the object is an rvalue (or constructed in place for prvalues), allowing you to treat chained builder member functions that return a new object uniformly without having to resort to templates.</p>
+   <p>We continue to follow the rule established in the previous section: <code class="highlight"><span class="k">this</span></code> is a pointer to the explicit object parameter or one of its base class subobjects. In the example below, <code class="highlight"><span class="k">this</span> <span class="o">==</span> <span class="o">&amp;</span><span class="n">self</span></code> and all accesses to <code class="highlight"><span class="n">s</span></code> could also be rewritten as <code class="highlight"><span class="k">this</span><span class="o">-></span><span class="n">s</span></code> or <code class="highlight"><span class="n">self</span><span class="p">.</span><span class="n">s</span></code>:</p>
 <pre class="highlight"><span class="k">class</span> <span class="nc">string_builder</span> <span class="p">{</span>
   <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">s</span><span class="p">;</span>
 
-  <span class="k">operator</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="p">(</span><span class="n">string_builder</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">operator</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="n">string_builder</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
   <span class="p">}</span>
+
   <span class="n">string_builder</span> <span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="n">string_builder</span> <span class="k">this</span> <span class="n">self</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">assert</span><span class="p">(</span><span class="n">n</span> <span class="o">></span> <span class="mi">0</span><span class="p">);</span>
 
@@ -1774,6 +1825,7 @@ explicitly apply to the <code class="highlight"><span class="n">identifier</span
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">self</span><span class="p">;</span>
   <span class="p">}</span>
+
   <span class="n">string_builder</span> <span class="n">bop</span><span class="p">(</span><span class="n">string_builder</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">s</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="s">"bop"</span><span class="p">);</span>
     <span class="k">return</span> <span class="n">self</span><span class="p">;</span>
@@ -1781,10 +1833,11 @@ explicitly apply to the <code class="highlight"><span class="n">identifier</span
 <span class="p">};</span>
 
 <span class="c1">// this is optimally efficient as far as allocations go</span>
-<span class="c1"></span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="k">const</span> <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">string_builder</span><span class="p">{{</span><span class="s">"asdf"</span><span class="p">}}</span> <span class="o">*</span> <span class="mi">5</span><span class="p">).</span><span class="n">bop</span><span class="p">().</span><span class="n">bop</span><span class="p">();</span>
+<span class="c1"></span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="k">const</span> <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">string_builder</span><span class="p">{</span><span class="s">"asdf"</span><span class="p">}</span> <span class="o">*</span> <span class="mi">5</span><span class="p">).</span><span class="n">bop</span><span class="p">().</span><span class="n">bop</span><span class="p">();</span>
 </pre>
-   <p>Of course, implementing this example with templated <code class="highlight"><span class="k">this</span></code> member functions would have been slightly more efficient due to also saving on move constructions, but the by-value <code class="highlight"><span class="k">this</span></code> usage makes for simpler code.</p>
-   <h3 class="heading settled" data-level="2.9" id="writing-the-function-pointer-types-for-such-functions"><span class="secno">2.9. </span><span class="content">Writing the function pointer types for such functions</span><a class="self-link" href="#writing-the-function-pointer-types-for-such-functions"></a></h3>
+   <p>In this example, <code class="highlight"><span class="n">x</span></code> would hold the value <code class="highlight"><span class="s">"asdfasdfasdfasdfasdfbopbop"</span></code>.</p>
+   <p>Of course, implementing this example with templated explicit object parameter member functions would have been slightly more efficient due to also saving on move constructions, but the by-value usage makes for simpler code.</p>
+   <h3 class="heading settled" data-level="2.5" id="writing-the-function-pointer-types-for-such-functions"><span class="secno">2.5. </span><span class="content">Writing the function pointer types for such functions</span><a class="self-link" href="#writing-the-function-pointer-types-for-such-functions"></a></h3>
    <p>Currently, we write member function pointers like so:</p>
 <pre class="highlight"><span class="k">struct</span> <span class="n">Y</span> <span class="p">{</span>
   <span class="kt">int</span> <span class="n">f</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="k">const</span> <span class="o">&amp;</span><span class="p">;</span>
@@ -1795,10 +1848,12 @@ explicitly apply to the <code class="highlight"><span class="n">identifier</span
    <p>The only one that does not have such a syntax is the pass-by-value method, all others have pre-existing signatures that do just fine.</p>
    <p>We are asking for suggestions for syntax for these function pointers. We give our first pass here:</p>
 <pre class="highlight"><span class="k">struct</span> <span class="n">Z</span> <span class="p">{</span>
-  <span class="kt">int</span> <span class="n">f</span><span class="p">(</span><span class="n">Z</span> <span class="k">const</span><span class="o">&amp;</span> <span class="k">this</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">);</span>
   <span class="c1">// same as &lt;code data-opaque>int f(int a, int b) const&amp;amp;;&lt;/code></span>
-<span class="c1"></span>  <span class="kt">int</span> <span class="nf">g</span><span class="p">(</span><span class="n">Z</span> <span class="k">this</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">);</span>
+<span class="c1"></span>  <span class="kt">int</span> <span class="n">f</span><span class="p">(</span><span class="n">Z</span> <span class="k">const</span><span class="o">&amp;</span> <span class="k">this</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">);</span>
+
+  <span class="kt">int</span> <span class="nf">g</span><span class="p">(</span><span class="n">Z</span> <span class="k">this</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">);</span>
 <span class="p">};</span>
+
 <span class="c1">// f is still the same as Y::f</span>
 <span class="c1"></span><span class="k">static_assert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_same_v</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Z</span><span class="o">::</span><span class="n">f</span><span class="p">),</span> <span class="kt">int</span> <span class="p">(</span><span class="n">Z</span><span class="o">::*</span><span class="p">)(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span> <span class="k">const</span> <span class="o">&amp;></span><span class="p">);</span>
 <span class="c1">// but would this alternate syntax make any sense?</span>
@@ -1807,31 +1862,57 @@ explicitly apply to the <code class="highlight"><span class="n">identifier</span
 <span class="c1"></span><span class="k">static_assert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_same_v</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Z</span><span class="o">::</span><span class="n">g</span><span class="p">),</span> <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="p">)(</span><span class="n">Z</span><span class="o">::</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span><span class="o">></span><span class="p">);</span>
 </pre>
    <p>Such an approach unifies, to a degree, the member functions and the rest of the function type spaces, since it communicates not only that the first parameter is special, but also its type and calling convention.</p>
-   <h3 class="heading settled" data-level="2.10" id="virtual-and-this-as-value"><span class="secno">2.10. </span><span class="content"><code class="highlight"><span class="k">virtual</span></code> and <code class="highlight"><span class="k">this</span></code> as value</span><a class="self-link" href="#virtual-and-this-as-value"></a></h3>
-   <p>Virtual member functions are always dispatched based on the type of the object the dot -- or arrow, in case of pointer -- operator is being used on. Once the member function is located, the parameter <code class="highlight"><span class="k">this</span></code> is constructed with the appropriate move or copy constructor and passed as the <code class="highlight"><span class="k">this</span></code> parameter, which might incur slicing.</p>
-   <p>Effectively, there is no change from current behavior -- only a slight addition of a new overload that behaves the way a user would expect.</p>
-   <h3 class="heading settled" data-level="2.11" id="virtual-and-templated-member-functions"><span class="secno">2.11. </span><span class="content"><code class="highlight"><span class="k">virtual</span></code> and templated member functions</span><a class="self-link" href="#virtual-and-templated-member-functions"></a></h3>
-   <p>This paper does not propose a change from the current behavior. <code class="highlight"><span class="k">virtual</span></code> templates are still disallowed.</p>
-   <h3 class="heading settled" data-level="2.12" id="can-static-member-functions-have-a-this-parameter"><span class="secno">2.12. </span><span class="content">Can <code class="highlight"><span class="k">static</span></code> member functions have a <code class="highlight"><span class="k">this</span></code> parameter?</span><a class="self-link" href="#can-static-member-functions-have-a-this-parameter"></a></h3>
-   <p>No. Static member functions currently do not have an implicit <code class="highlight"><span class="k">this</span></code> parameter, and therefore have no reason to have an explicit one.</p>
-   <h3 class="heading settled" data-level="2.13" id="teachability-implications"><span class="secno">2.13. </span><span class="content">Teachability Implications</span><a class="self-link" href="#teachability-implications"></a></h3>
+   <h3 class="heading settled" data-level="2.6" id="teachability-implications"><span class="secno">2.6. </span><span class="content">Teachability Implications</span><a class="self-link" href="#teachability-implications"></a></h3>
    <p>Using <code class="highlight"><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span></code> follows existing patterns for dealing with forwarding references.</p>
    <p>Explicitly naming the object as the <code class="highlight"><span class="k">this</span></code>-designated first parameter fits with many programmers' mental model of the <code class="highlight"><span class="k">this</span></code> pointer being the first parameter to member functions "under the hood" and is comparable to usage in other languages, e.g. Python and Rust.</p>
    <p>This also makes the definition of "<code class="highlight"><span class="k">const</span></code> member function" more obvious, meaning it can more easily be taught to students.</p>
    <p>It also works as a more obvious way to teach how <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">bind</span></code> and <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">function</span></code> work with a member function pointer by making the pointer explicit.</p>
-   <h3 class="heading settled" data-level="2.14" id="abi-implications-for-stdfunction-and-related"><span class="secno">2.14. </span><span class="content">ABI implications for <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">function</span></code> and related</span><a class="self-link" href="#abi-implications-for-stdfunction-and-related"></a></h3>
+   <h3 class="heading settled" data-level="2.7" id="abi-implications-for-stdfunction-and-related"><span class="secno">2.7. </span><span class="content">ABI implications for <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">function</span></code> and related</span><a class="self-link" href="#abi-implications-for-stdfunction-and-related"></a></h3>
    <p>If references and pointers do not have the same representation for member functions, this effectively says "for the purposes of the <code class="highlight"><span class="k">this</span></code>-designated first parameter, they do."</p>
    <p>This matters because code written in the "<code class="highlight"><span class="k">this</span></code> is a pointer" syntax with the <code class="highlight"><span class="k">this</span><span class="o">-></span></code> notation needs to be assembly-identical to code written with the <code class="highlight"><span class="n">self</span><span class="p">.</span></code> notation; the two are just different ways to implement a function with the same signature.</p>
-   <h3 class="heading settled" data-level="2.15" id="interplays-with-capturing-this-and-this"><span class="secno">2.15. </span><span class="content">Interplays with capturing <code class="highlight"><span class="p">[</span><span class="k">this</span><span class="p">]</span></code> and <code class="highlight"><span class="p">[</span><span class="o">*</span><span class="k">this</span><span class="p">]</span></code></span><a class="self-link" href="#interplays-with-capturing-this-and-this"></a></h3>
-   <p><code class="highlight"><span class="k">this</span></code> just designates the parameter that is bound to the reference to the function object. It does not, in any way, change the meaning of <code class="highlight"><span class="k">this</span></code>.</p>
-   <p>If other language features play with what <code class="highlight"><span class="k">this</span></code> means, they are completely orthogonal and do not have interplays with this proposal. However, it should be obvious that develpers have a great potential for introducing hard-to-read code if they are at all changing the meaning of <code class="highlight"><span class="k">this</span></code>, especially in conjunction with this proposal.</p>
-   <h3 class="heading settled" data-level="2.16" id="is-auto-this-self-allowed-in-member-functions-as-well-as-lambdas"><span class="secno">2.16. </span><span class="content">Is <code class="highlight"><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span></code> allowed in member functions as well as lambdas?</span><a class="self-link" href="#is-auto-this-self-allowed-in-member-functions-as-well-as-lambdas"></a></h3>
-   <p>Yes. <code class="highlight"><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">param_name</span></code> has a well-defined meaning that is unified across the language. There is absolutely no reason to make it less so.</p>
-   <h3 class="heading settled" data-level="2.17" id="impact-on-the-standard"><span class="secno">2.17. </span><span class="content">Impact on the Standard</span><a class="self-link" href="#impact-on-the-standard"></a></h3>
-   <p>TBD: A bunch of stuff in section 8.1.5 [expr.prim.lambda].</p>
-   <p>TBD: A bunch of stuff in that \this can appear as the first member function
-parameter.</p>
-   <h3 class="heading settled" data-level="2.18" id="minimal-translations"><span class="secno">2.18. </span><span class="content">Minimal Translations</span><a class="self-link" href="#minimal-translations"></a></h3>
+   <h3 class="heading settled" data-level="2.8" id="virtual-and-this-as-value"><span class="secno">2.8. </span><span class="content"><code class="highlight"><span class="k">virtual</span></code> and <code class="highlight"><span class="k">this</span></code> as value</span><a class="self-link" href="#virtual-and-this-as-value"></a></h3>
+   <p>Virtual member functions are always dispatched based on the type of the object the dot -- or arrow, in case of pointer -- operator is being used on. Once the member function is located, the parameter <code class="highlight"><span class="k">this</span></code> is constructed with the appropriate move or copy constructor and passed as the <code class="highlight"><span class="k">this</span></code> parameter, which might incur slicing.</p>
+   <p>Effectively, there is no change from current behavior -- only a slight addition of a new overload that behaves the way a user would expect.</p>
+   <p>Virtual member function templates are not allowed in the language today, and this paper does not propose a change from the current behavior for member functions with explicit object parameters either.</p>
+   <h3 class="heading settled" data-level="2.9" id="can-static-member-functions-have-a-this-parameter"><span class="secno">2.9. </span><span class="content">Can <code class="highlight"><span class="k">static</span></code> member functions have a <code class="highlight"><span class="k">this</span></code> parameter?</span><a class="self-link" href="#can-static-member-functions-have-a-this-parameter"></a></h3>
+   <p>No. Static member functions currently do not have an implicit <code class="highlight"><span class="k">this</span></code> parameter, and therefore have no reason to have an explicit one.</p>
+   <h3 class="heading settled" data-level="2.10" id="interplays-with-capturing-this-and-this-in-lambdas"><span class="secno">2.10. </span><span class="content">Interplays with capturing <code class="highlight"><span class="p">[</span><span class="k">this</span><span class="p">]</span></code> and <code class="highlight"><span class="p">[</span><span class="o">*</span><span class="k">this</span><span class="p">]</span></code> in lambdas</span><a class="self-link" href="#interplays-with-capturing-this-and-this-in-lambdas"></a></h3>
+   <p><code class="highlight"><span class="k">this</span></code> just designates the explicit object parameter. It does not, in any way, change the meaning of <code class="highlight"><span class="k">this</span></code> in the body of the lambda.</p>
+   <table>
+    <tbody>
+     <tr>
+      <th>C++17
+      <th>Proposed
+     <tr>
+      <td>
+<pre class="highlight"><span class="k">struct</span> <span class="n">X</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
+
+    <span class="k">auto</span> <span class="nf">getter</span><span class="p">()</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="p">[</span><span class="o">*</span><span class="k">this</span><span class="p">](){</span>
+            <span class="k">return</span> <span class="n">x</span>       <span class="c1">// refers to X::x</span>
+<span class="c1"></span>                <span class="o">+</span> <span class="k">this</span><span class="o">-></span><span class="n">y</span><span class="p">;</span> <span class="c1">// refers to X::y</span>
+<span class="c1"></span>        <span class="p">};</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre>
+      <td>
+<pre class="highlight"><span class="k">struct</span> <span class="n">X</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
+
+    <span class="k">auto</span> <span class="nf">getter</span><span class="p">()</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="p">[</span><span class="o">*</span><span class="k">this</span><span class="p">](</span><span class="k">auto</span> <span class="k">const</span><span class="o">&amp;</span> <span class="k">this</span> <span class="cm">/* self */</span><span class="p">){</span>
+            <span class="k">return</span> <span class="n">x</span>       <span class="c1">// still refers to X::x</span>
+<span class="c1"></span>                <span class="o">+</span> <span class="k">this</span><span class="o">-></span><span class="n">y</span><span class="p">;</span> <span class="c1">// still refers to X::y</span>
+<span class="c1"></span>        <span class="p">};</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre>
+   </table>
+   <p>If other language features play with what <code class="highlight"><span class="k">this</span></code> means, they are completely orthogonal and do not have interplays with this proposal. However, it should be obvious that developers have a great potential for introducing hard-to-read code if they are at all changing the meaning of <code class="highlight"><span class="k">this</span></code> in function bodies, especially in conjunction with this proposal.</p>
+   <h3 class="heading settled" data-level="2.11" id="translating-code-to-use-explicit-object-parameters"><span class="secno">2.11. </span><span class="content">Translating code to use explicit object parameters</span><a class="self-link" href="#translating-code-to-use-explicit-object-parameters"></a></h3>
    <p>The most common qualifier overload sets for member functions are:</p>
    <ol>
     <li data-md="">
@@ -1876,9 +1957,9 @@ parameter.</p>
     <span class="kt">void</span> <span class="n">bar</span> <span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">);</span>
 <span class="p">};</span>
 </pre>
-   <p>This overload is callable for all <code class="highlight"><span class="k">const</span></code>- and ref-qualified object parameters, just like the above examples. It is also callable for <code class="highlight"><span class="k">volatile</span></code>-qualified objects, so the code is not entirely equivalent; however, the <code class="highlight"><span class="k">volatile</span></code> versions are unlikely to be invalid and more likely to be simply left out for the sake of brevity. The only major difference is in the third case, where non-<code class="highlight"><span class="k">const</span></code> lvalue arguments would be non-<code class="highlight"><span class="k">const</span></code> inside the function body, and <code class="highlight"><span class="k">const</span></code> rvalue arguments would be <code class="highlight"><span class="k">const</span><span class="o">&amp;&amp;</span></code> instead of <code class="highlight"><span class="k">const</span><span class="o">&amp;</span></code>. Again, this is unlikely to cause correctness issues unless <code class="highlight"><span class="k">this</span></code> has other member functions called on it which do semantically different things depending on the cv-qualification of <code class="highlight"><span class="k">this</span></code>.</p>
-   <h3 class="heading settled" data-level="2.19" id="alternative-syntax"><span class="secno">2.19. </span><span class="content">Alternative syntax</span><a class="self-link" href="#alternative-syntax"></a></h3>
-   <p>Instead of qualifiying the parameter with <code class="highlight"><span class="k">this</span></code>, to mark it as the parameter for deducing <code class="highlight"><span class="k">this</span></code>, we could let the first parameter be named <code class="highlight"><span class="k">this</span></code> instead:</p>
+   <p>This overload is callable for all <code class="highlight"><span class="k">const</span></code>- and ref-qualified object parameters, just like the above examples. It is also callable for <code class="highlight"><span class="k">volatile</span></code>-qualified objects, so the code is not entirely equivalent; however, the <code class="highlight"><span class="k">volatile</span></code> versions are unlikely to be valid and more likely to be simply left out for the sake of brevity. The only major difference is in the third case, where non-<code class="highlight"><span class="k">const</span></code> lvalue arguments would be non-<code class="highlight"><span class="k">const</span></code> inside the function body, and <code class="highlight"><span class="k">const</span></code> rvalue arguments would be <code class="highlight"><span class="k">const</span><span class="o">&amp;&amp;</span></code> instead of <code class="highlight"><span class="k">const</span><span class="o">&amp;</span></code>. Again, this is unlikely to cause correctness issues unless <code class="highlight"><span class="k">this</span></code> has other member functions called on it which do semantically different things depending on the cv-qualification of <code class="highlight"><span class="k">this</span></code>.</p>
+   <h3 class="heading settled" data-level="2.12" id="alternative-syntax"><span class="secno">2.12. </span><span class="content">Alternative syntax</span><a class="self-link" href="#alternative-syntax"></a></h3>
+   <p>Instead of qualifying the parameter with <code class="highlight"><span class="k">this</span></code>, to mark it as the parameter for deducing <code class="highlight"><span class="k">this</span></code>, we could let the first parameter be <em>named</em> <code class="highlight"><span class="k">this</span></code> instead:</p>
 <pre class="highlight"><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">></span>
 <span class="k">struct</span> <span class="n">X</span> <span class="p">{</span>
     <span class="n">T</span> <span class="n">value</span><span class="p">;</span>
@@ -1895,7 +1976,7 @@ parameter.</p>
         <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">This</span><span class="o">></span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="n">value</span><span class="p">;</span>
     <span class="p">}</span>
 </pre>
-   <p>In the example above, <code class="highlight"><span class="k">this</span></code> is no longer a pointer. Since <code class="highlight"><span class="k">this</span></code> can never be a null pointer in valid code in the first place, this is an advantage, but may add confusion to the language.</p>
+   <p>In the example above, <code class="highlight"><span class="k">this</span></code> is no longer a pointer. Since <code class="highlight"><span class="k">this</span></code> can never be a null pointer in valid code in the first place, this is an advantage, but may add confusion to the language. It also leaves us at a loss as to how one can address the derived object and the base object, as outlined in the previous section.</p>
    <p>Rather than naming the first parameter <code class="highlight"><span class="k">this</span></code>, we can also consider introducing a dummy template parameter where the qualifications normally reside. This syntax is also ill-formed today, and is purely a language extension:</p>
 <pre class="highlight"><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">></span>
 <span class="k">struct</span> <span class="n">X</span> <span class="p">{</span>
@@ -1920,7 +2001,7 @@ parameter.</p>
 <span class="p">};</span>
 </pre>
    <p>This has the benefit of not muddying the parameter list, and it keeps the qualifier deduction off to the side where qualifiers usually live.</p>
-   <h3 class="heading settled" data-level="2.20" id="unified-function-call-syntax"><span class="secno">2.20. </span><span class="content">Unified Function Call Syntax</span><a class="self-link" href="#unified-function-call-syntax"></a></h3>
+   <h3 class="heading settled" data-level="2.13" id="unified-function-call-syntax"><span class="secno">2.13. </span><span class="content">Unified Function Call Syntax</span><a class="self-link" href="#unified-function-call-syntax"></a></h3>
    <p>The proposed use of <code class="highlight"><span class="k">this</span></code> as the first parameter seems as if these members functions really had better be written as non-members to begin with, and might suggest that the solution to this problem is really unified function call syntax (UFCS).</p>
    <p>However, several of the motivating examples presented in this proposal are implementations of operators that cannot be implemented as non-members (<code class="highlight"><span class="p">()</span></code>, <code class="highlight"><span class="p">[]</span></code>, <code class="highlight"><span class="o">-></span></code>, and unary <code class="highlight"><span class="o">*</span></code>). UFCS alone would be insufficient. Additionally, the member function overload sets in all of these examples exist as <em>member</em> functions, not free functions, today. Having to take a member function overload set and rewrite it as a non-member (likely <code class="highlight"><span class="k">friend</span></code>ed) free function template is very much changing the intended design of a class to overcome a language hurdle. This proposal contends that it would be more in keeping with programmer intent to allow member functions to stay member functions.</p>
    <h2 class="heading settled" data-level="3" id="real-world-examples"><span class="secno">3. </span><span class="content">Real-World Examples</span><a class="self-link" href="#real-world-examples"></a></h2>
@@ -1955,10 +2036,10 @@ parameter.</p>
 <pre class="highlight"><span class="k">class</span> <span class="nc">TextBlock</span> <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
   <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
-  <span class="k">auto</span><span class="o">&amp;</span> <span class="k">operator</span><span class="p">[](</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">,</span>
+  <span class="k">auto</span><span class="o">&amp;</span> <span class="k">operator</span><span class="p">[](</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">,</span>
                    <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">position</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// ...</span>
-<span class="c1"></span>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="n">text</span><span class="p">[</span><span class="n">position</span><span class="p">];</span>
+<span class="c1"></span>    <span class="k">return</span> <span class="n">text</span><span class="p">[</span><span class="n">position</span><span class="p">];</span>
   <span class="p">}</span>
   <span class="c1">// ...</span>
 <span class="c1"></span><span class="p">};</span>
@@ -1984,8 +2065,8 @@ parameter.</p>
 <span class="k">class</span> <span class="nc">optional</span> <span class="p">{</span>
   <span class="c1">// ...</span>
 <span class="c1"></span>  <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
-  <span class="k">constexpr</span> <span class="k">auto</span> <span class="k">operator</span><span class="o">-></span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">addressof</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">m_value</span><span class="p">);</span>
+  <span class="k">constexpr</span> <span class="k">auto</span> <span class="k">operator</span><span class="o">-></span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">addressof</span><span class="p">(</span><span class="k">this</span><span class="o">-></span><span class="n">m_value</span><span class="p">);</span>
   <span class="p">}</span>
   <span class="c1">// ...</span>
 <span class="c1"></span><span class="p">};</span>
@@ -2047,14 +2128,14 @@ parameter.</p>
 <span class="k">class</span> <span class="nc">optional</span> <span class="p">{</span>
   <span class="c1">// ...</span>
 <span class="c1"></span>  <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
-  <span class="k">constexpr</span> <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="n">forward</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="n">self</span><span class="p">).</span><span class="n">m_value</span><span class="p">;</span>
+  <span class="k">constexpr</span> <span class="n">like_t</span><span class="o">&lt;</span><span class="n">Self</span><span class="p">,</span> <span class="n">T</span><span class="o">>&amp;&amp;</span> <span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">forward_like</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">).</span><span class="n">m_value</span><span class="p">;</span>
   <span class="p">}</span>
 
   <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
-  <span class="k">constexpr</span> <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">value</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">has_value</span><span class="p">())</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="n">forward</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="n">self</span><span class="p">).</span><span class="n">m_value</span><span class="p">;</span>
+  <span class="k">constexpr</span> <span class="n">like_t</span><span class="o">&lt;</span><span class="n">Self</span><span class="p">,</span> <span class="n">T</span><span class="o">>&amp;&amp;</span> <span class="n">value</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">has_value</span><span class="p">())</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="n">forward_like</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">).</span><span class="n">m_value</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="k">throw</span> <span class="n">bad_optional_access</span><span class="p">();</span>
   <span class="p">}</span>
@@ -2128,18 +2209,18 @@ parameter.</p>
   <span class="c1">// ...</span>
 <span class="c1"></span>  <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="p">,</span> <span class="k">typename</span> <span class="n">F</span><span class="o">></span>
   <span class="k">constexpr</span> <span class="k">auto</span>
-  <span class="n">and_then</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">,</span> <span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">{</span>
+  <span class="n">and_then</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">,</span> <span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">using</span> <span class="n">val</span> <span class="o">=</span> <span class="k">decltype</span><span class="p">((</span>
-        <span class="n">forward</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="n">self</span><span class="p">).</span><span class="n">m_value</span><span class="p">));</span>
+        <span class="n">forward_like</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">).</span><span class="n">m_value</span><span class="p">));</span>
     <span class="k">using</span> <span class="n">result</span> <span class="o">=</span> <span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">val</span><span class="o">></span><span class="p">;</span>
 
     <span class="k">static_assert</span><span class="p">(</span>
       <span class="n">is_optional</span><span class="o">&lt;</span><span class="n">result</span><span class="o">>::</span><span class="n">value</span><span class="p">,</span>
       <span class="s">"F must return an optional"</span><span class="p">);</span>
 
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="n">has_value</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nf">has_value</span><span class="p">()</span>
         <span class="o">?</span> <span class="n">invoke</span><span class="p">(</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">F</span><span class="o">></span><span class="p">(</span><span class="n">f</span><span class="p">),</span>
-                 <span class="n">forward</span><span class="o">&lt;</span><span class="n">self</span><span class="o">></span>
+                 <span class="n">forward_like</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span>
                    <span class="p">(</span><span class="n">self</span><span class="p">).</span><span class="n">m_value</span><span class="p">)</span>
         <span class="o">:</span> <span class="n">nullopt</span><span class="p">;</span>
   <span class="p">}</span>
@@ -2149,7 +2230,86 @@ parameter.</p>
    </table>
    <p>Keep in mind that there are a few more functions in P0798 that have this lead to this explosion of overloads, so the code difference and clarity is dramatic.</p>
    <p>For those that dislike returning auto in these cases, it is very easy to write a metafunction that matches the appropriate qualifiers from a type. Certainly simpler than copying and pasting code and hoping that the minor changes were made correctly in every case.</p>
-   <h3 class="heading settled" data-level="3.2" id="sfinae-friendly-callables"><span class="secno">3.2. </span><span class="content">SFINAE-friendly callables</span><a class="self-link" href="#sfinae-friendly-callables"></a></h3>
+   <h3 class="heading settled" data-level="3.2" id="recursive-lambdas"><span class="secno">3.2. </span><span class="content">Recursive Lambdas</span><a class="self-link" href="#recursive-lambdas"></a></h3>
+   <p>This proposal also allows for an alternative solution to implementing a recursive lambda, since now we open up the possibility of allowing a lambda to reference itself:</p>
+<pre class="highlight"><span class="c1">// as proposed in [P0839]</span>
+<span class="c1"></span><span class="k">auto</span> <span class="n">fib</span> <span class="o">=</span> <span class="p">[]</span> <span class="n">self</span> <span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="k">return</span> <span class="n">n</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nf">self</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">self</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="c1">// this proposal</span>
+<span class="c1"></span><span class="k">auto</span> <span class="n">fib</span> <span class="o">=</span> <span class="p">[](</span><span class="k">auto</span><span class="o">&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="k">return</span> <span class="n">n</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nf">self</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">self</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">);</span>
+<span class="p">};</span>
+</pre>
+   <p>This simply works following the established rules. The call operator of the closure object can have an explicit object parameter too, so <code class="highlight"><span class="n">self</span></code> in this example <em>is</em> the closure object.</p>
+   <p>If the lambda would otherwise decay to a function pointer, <code class="highlight"><span class="o">&amp;</span><span class="n">self</span></code> shall have the value of that function pointer.</p>
+   <h4 class="heading settled" data-level="3.2.1" id="expressions-allowed-for-self-in-lambdas"><span class="secno">3.2.1. </span><span class="content">Expressions allowed for <code class="highlight"><span class="n">self</span></code> in lambdas</span><a class="self-link" href="#expressions-allowed-for-self-in-lambdas"></a></h4>
+<pre class="highlight">  <span class="n">self</span><span class="p">(...);</span>      <span class="c1">// call with appropriate signature</span>
+<span class="c1"></span>  <span class="k">decltype</span><span class="p">(</span><span class="n">self</span><span class="p">);</span> <span class="c1">// evaluates to the type of the lambda with the appropriate</span>
+<span class="c1"></span>                  <span class="c1">// cv-ref qualifiers</span>
+<span class="c1"></span>  <span class="o">&amp;</span><span class="n">self</span><span class="p">;</span>          <span class="c1">// the address of either the closure object or function pointer</span>
+<span class="c1"></span>  <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">self</span><span class="p">)</span> <span class="c1">// you’re allowed to move yourself into an algorithm...</span>
+<span class="c1"></span>  <span class="cm">/* ... and all other things you’re allowed to do with the lambda itself. */</span>
+</pre>
+   <p>Within lambda expressions, the <code class="highlight"><span class="k">this</span></code> parameter still does not allow one to refer to the members of the closure object, which has no defined storage or layout, nor do its members have names. Instead it allows one to deduce the value category of the lambda and access its members -- including various call operators -- in the way appropriate for the value category.</p>
+   <h4 class="heading settled" data-level="3.2.2" id="deducing-derived-objects-for-generic-lambdas"><span class="secno">3.2.2. </span><span class="content">Deducing derived objects for generic lambdas</span><a class="self-link" href="#deducing-derived-objects-for-generic-lambdas"></a></h4>
+   <p>When we deduce the object parameter, it doesn’t have to be the same type as the class - it could be a derived type. This isn’t typically relevant for lambdas, which would just be used as is, but it does provide an interesting opportunity when it comes to visitation. One tool to make it easier to invoke <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">visit</span><span class="p">()</span></code> on a <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">variant</span></code> is to write an overload utility which ends up creating a new type that inherits from all of the provided types. Consider a scenario where we have a <code class="highlight"><span class="n">Tree</span></code> type which is a <code class="highlight"><span class="n">variant</span><span class="o">&lt;</span><span class="n">Leaf</span><span class="p">,</span> <span class="n">Node</span><span class="o">></span></code>, where a <code class="highlight"><span class="n">Node</span></code> contains two sub-<code class="highlight"><span class="n">Tree</span></code>s. We could count the number of leaves in a <code class="highlight"><span class="n">Tree</span></code> as follows:</p>
+<pre class="highlight"><span class="kt">int</span> <span class="nf">num_leaves</span><span class="p">(</span><span class="n">Tree</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">tree</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">visit</span><span class="p">(</span><span class="n">overload</span><span class="p">(</span>
+        <span class="p">[](</span><span class="n">Leaf</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span> <span class="p">},</span>
+        <span class="p">[](</span><span class="k">auto</span> <span class="k">const</span><span class="o">&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">,</span> <span class="n">Node</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">visit</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">n</span><span class="p">.</span><span class="n">left</span><span class="p">)</span> <span class="o">+</span> <span class="n">std</span><span class="o">::</span><span class="n">visit</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">n</span><span class="p">.</span><span class="n">right</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">),</span> <span class="n">tree</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+   <p>In this example, <code class="highlight"><span class="n">self</span></code> doesn’t deduce as that inner lambda, it deduces at the overload object, so this works.</p>
+   <h3 class="heading settled" data-level="3.3" id="crtp-without-the-c-r-or-even-t"><span class="secno">3.3. </span><span class="content">CRTP, without the C, R, or even T</span><a class="self-link" href="#crtp-without-the-c-r-or-even-t"></a></h3>
+   <p>Today, a common design pattern is the Curiously Recurring Template Pattern. This implies passing the derived type as a template parameter to a base class template, as a way of achieving static polymorphism. If we wanted to just outsource implementing postfix incrementing to a base, we could use CRTP for that. But with explicit object parameters that deduce to the derived objects already, we don’t need any curious recurrence. We can just use standard inheritance and let deduction just do its thing. The base class doesn’t even need to be a template:</p>
+   <table>
+    <tbody>
+     <tr>
+      <th>C++17
+      <th>Proposed
+     <tr>
+      <td>
+<pre class="highlight"><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Derived</span><span class="o">></span>
+<span class="k">struct</span> <span class="n">add_postfix_increment</span> <span class="p">{</span>
+    <span class="n">Derived</span> <span class="k">operator</span><span class="o">++</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">auto</span><span class="o">&amp;</span> <span class="n">self</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Derived</span><span class="o">&amp;></span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">);</span>
+
+        <span class="n">Derived</span> <span class="nf">tmp</span><span class="p">(</span><span class="n">self</span><span class="p">);</span>
+        <span class="o">++</span><span class="n">self</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">tmp</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nl">some_type</span> <span class="p">:</span> <span class="n">add_postfix_increment</span><span class="o">&lt;</span><span class="n">some_Type</span><span class="o">></span> <span class="p">{</span>
+    <span class="n">some_type</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">++</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+<span class="p">};</span>
+</pre>
+      <td>
+<pre class="highlight"><span class="k">struct</span> <span class="n">add_postifx_increment</span> <span class="p">{</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
+    <span class="n">Self</span> <span class="k">operator</span><span class="o">++</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Self</span> <span class="n">tmp</span><span class="p">(</span><span class="n">self</span><span class="p">);</span>
+        <span class="o">++</span><span class="n">self</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">tmp</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+
+
+<span class="k">struct</span> <span class="nl">some_type</span> <span class="p">:</span> <span class="n">add_postfix_increment</span> <span class="p">{</span>
+    <span class="n">some_type</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">++</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+<span class="p">};</span>
+</pre>
+   </table>
+   <p>The example at right isn’t much shorter, but it is certainly simpler.</p>
+   <h3 class="heading settled" data-level="3.4" id="sfinae-friendly-callables"><span class="secno">3.4. </span><span class="content">SFINAE-friendly callables</span><a class="self-link" href="#sfinae-friendly-callables"></a></h3>
    <p>A seemingly unrelated problem to the question of code quadruplication is that of writing these numerous overloads for function wrappers, as demonstrated in <a href="https://wg21.link/p0826">P0826</a>. Consider what happens if we implement <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">not_fn</span><span class="p">()</span></code>, as currently specified:</p>
 <pre class="highlight"><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">F</span><span class="o">></span>
 <span class="k">class</span> <span class="nc">call_wrapper</span> <span class="p">{</span>
@@ -2205,46 +2365,34 @@ parameter.</p>
     <span class="n">F</span> <span class="n">f</span><span class="p">;</span>
 
     <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="p">,</span> <span class="k">typename</span><span class="p">...</span> <span class="n">Args</span><span class="o">></span>
-    <span class="k">auto</span> <span class="k">operator</span><span class="p">()(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="p">)</span>
-        <span class="o">-></span> <span class="k">decltype</span><span class="p">(</span><span class="o">!</span><span class="n">invoke</span><span class="p">(</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="n">self</span><span class="p">).</span><span class="n">f</span><span class="p">,</span> <span class="n">forward</span><span class="o">&lt;</span><span class="n">Args</span><span class="o">></span><span class="p">(</span><span class="n">args</span><span class="p">)...))</span>
+    <span class="k">auto</span> <span class="k">operator</span><span class="p">()(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span>
+        <span class="o">-></span> <span class="k">decltype</span><span class="p">(</span><span class="o">!</span><span class="n">invoke</span><span class="p">(</span><span class="n">forward_like</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="n">f</span><span class="p">),</span> <span class="n">forward</span><span class="o">&lt;</span><span class="n">Args</span><span class="o">></span><span class="p">(</span><span class="n">args</span><span class="p">)...))</span>
     <span class="p">{</span>
-        <span class="k">return</span> <span class="o">!</span><span class="n">invoke</span><span class="p">(</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="n">self</span><span class="p">).</span><span class="n">f</span><span class="p">,</span> <span class="n">forward</span><span class="o">&lt;</span><span class="n">Args</span><span class="o">></span><span class="p">(</span><span class="n">args</span><span class="p">)...);</span>
+        <span class="k">return</span> <span class="o">!</span><span class="n">invoke</span><span class="p">(</span><span class="n">forward_like</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="n">f</span><span class="p">),</span> <span class="n">forward</span><span class="o">&lt;</span><span class="n">Args</span><span class="o">></span><span class="p">(</span><span class="n">args</span><span class="p">)...);</span>
     <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">F</span><span class="o">></span>
 <span class="k">auto</span> <span class="n">not_fn</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="n">call_wrapper</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">decay_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">>></span><span class="p">{</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">F</span><span class="o">></span><span class="p">(</span><span class="n">f</span><span class="p">)};</span>
+    <span class="k">return</span> <span class="n">call_wrapper</span><span class="o">&lt;</span><span class="n">decay_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">>></span><span class="p">{</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">F</span><span class="o">></span><span class="p">(</span><span class="n">f</span><span class="p">)};</span>
 <span class="p">}</span>
 
 <span class="n">not_fn</span><span class="p">(</span><span class="n">unfriendly</span><span class="p">{})(</span><span class="mi">1</span><span class="p">);</span> <span class="c1">// ok</span>
 <span class="c1"></span><span class="n">not_fn</span><span class="p">(</span><span class="n">fun</span><span class="p">{})();</span>         <span class="c1">// error</span>
 </pre>
    <p>Here, there is only one overload with everything deduced together, with either <code class="highlight"><span class="n">Self</span> <span class="o">=</span> <span class="n">fun</span></code> or <code class="highlight"><span class="n">Self</span> <span class="o">=</span> <span class="n">poison</span></code> as appropriate. As a result, this singular overload then has precisely the desired behavior: working, for <code class="highlight"><span class="n">unfriendly</span></code>, and not working, for <code class="highlight"><span class="n">fun</span></code>.</p>
-   <h3 class="heading settled" data-level="3.3" id="recursive-lambdas"><span class="secno">3.3. </span><span class="content">Recursive Lambdas</span><a class="self-link" href="#recursive-lambdas"></a></h3>
-   <p>This proposal also allows for an alternative solution to implementing a recursive lambda, since now we open up the possibility of allowing a lambda to reference itself:</p>
-<pre class="highlight"><span class="c1">// as proposed in [P0839]</span>
-<span class="c1"></span><span class="k">auto</span> <span class="n">fib</span> <span class="o">=</span> <span class="p">[]</span> <span class="n">self</span> <span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="k">return</span> <span class="n">n</span><span class="p">;</span>
-    <span class="k">return</span> <span class="nf">self</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">self</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">);</span>
-<span class="p">};</span>
-
-<span class="c1">// this proposal</span>
-<span class="c1"></span><span class="k">auto</span> <span class="n">fib</span> <span class="o">=</span> <span class="p">[](</span><span class="k">auto</span><span class="o">&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="k">return</span> <span class="n">n</span><span class="p">;</span>
-    <span class="k">return</span> <span class="nf">self</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">self</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">);</span>
-<span class="p">};</span>
-</pre>
-   <p>If the lambda would otherwise decay to a function pointer, <code class="highlight"><span class="o">&amp;</span><span class="n">self</span></code> shall have the value of that function pointer.</p>
-   <h4 class="heading settled" data-level="3.3.1" id="expressions-allowed-for-self-in-lambdas"><span class="secno">3.3.1. </span><span class="content">Expressions allowed for \self in lambdas</span><a class="self-link" href="#expressions-allowed-for-self-in-lambdas"></a></h4>
-<pre class="highlight">  <span class="n">self</span><span class="p">(...);</span>      <span class="c1">// call with appropriate signature</span>
-<span class="c1"></span>  <span class="k">decltype</span><span class="p">(</span><span class="n">self</span><span class="p">);</span> <span class="c1">// evaluates to the type of the lambda with the appropriate</span>
-<span class="c1"></span>                  <span class="c1">// cv-ref qualifiers</span>
-<span class="c1"></span>  <span class="o">&amp;</span><span class="n">self</span><span class="p">;</span>          <span class="c1">// the address of either the closure object or function pointer</span>
-<span class="c1"></span>  <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">self</span><span class="p">)</span> <span class="c1">// you’re allowed to move yourself into an algorithm...</span>
-<span class="c1"></span>  <span class="cm">/* ... and all other things you’re allowed to do with the lambda itself. */</span>
-</pre>
-   <p>Within lambda expressions, the <code class="highlight"><span class="k">this</span></code> parameter still does not allow one to refer to the members of the closure object, which has no defined storage or layout, nor do its members have names. Instead it allows one to deduce the value category of the lambda and access its members -- including various call operators -- in the way appropriate for the value category.</p>
+   <h2 class="heading settled" data-level="4" id="acknowledgements"><span class="secno">4. </span><span class="content">Acknowledgements</span><a class="self-link" href="#acknowledgements"></a></h2>
+   <p>The authors would like to thank:</p>
+   <ul>
+    <li data-md="">
+     <p>Jonathan Wakely, for bringing us all together by pointing out we were writing the same paper, twice</p>
+    <li data-md="">
+     <p>Graham Heynes, Andrew Bennieston, Jeff Snyder for early feedback regarding the meaning of <code class="highlight"><span class="k">this</span></code> inside function bodies</p>
+    <li data-md="">
+     <p>Chandler Carruth, Amy Worthington, Jackie Chen, Vittorio Romeo, Tristan Brindle, Agustín Bergé, Louis Dionne, and Michael Park for early feedback</p>
+    <li data-md="">
+     <p>Guilherme Hartmann for his guidance with the implementation</p>
+   </ul>
   </main>
 <script>
 (function() {
