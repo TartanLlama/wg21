@@ -1065,5 +1065,5 @@ Here, there is only one overload with everything deduced together, with either `
 The authors would like to thank:
 - Jonathan Wakely, for bringing us all together by pointing out we were writing the same paper, twice
 - Graham Heynes, Andrew Bennieston, Jeff Snyder for early feedback regarding the meaning of `this` inside function bodies
-- Jackie Chen, Vittorio Romeo, Tristan Brindle, Louis Dionne, and Michael Park for early feedback
+- Jackie Chen, Vittorio Romeo, Tristan Brindle, Agustín Bergé, Louis Dionne, and Michael Park for early feedback
 - Guilherme Hartmann for his guidance with the implementation
