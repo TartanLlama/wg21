@@ -2,7 +2,7 @@
  <head>
   <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
-  <title>p0847r0: Deducing this</title>
+  <title>p0847R0: Deducing this</title>
 <style data-fill-with="stylesheet">/******************************************************************************
  *                   Style sheet for the W3C specifications                   *
  *
@@ -1215,10 +1215,10 @@ Possible extra rowspan handling
     table {
       border-collapse: collapse;
     }
-    </style>
-  <meta content="Bikeshed version 0d6a1c7475b7bb2485f411c7e73d9990fd0cfef5" name="generator">
-  <link href="wg21.tartanllama.xyz/deducing-this" rel="canonical">
-  <meta content="4d8afd6fe155954506648a9696e641374c5a7ba1" name="document-revision">
+  </style>
+  <meta content="Bikeshed version 405e5d97c9744a2182892308d7a95a41731f9220" name="generator">
+  <link href="http://wg21.link/P0847R0" rel="canonical">
+  <meta content="12158f003de6009123008b1d8f553055615eb358" name="document-revision">
 <style>/* style-md-lists */
 
 /* This is a weird hack for me not yet following the commonmark spec
@@ -1427,21 +1427,21 @@ pre .property::before, pre .property::after {
  <body class="h-entry">
   <div class="head">
    <p data-fill-with="logo"></p>
-   <h1 class="p-name no-ref" id="title">p0847r0<br>Deducing this</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Published Proposal, <time class="dt-updated" datetime="2018-02-11">11 February 2018</time></span></h2>
+   <h1 class="p-name no-ref" id="title">p0847R0<br>Deducing this</h1>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Published Proposal, <time class="dt-updated" datetime="2018-02-12">12 February 2018</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
-     <dd><a class="u-url" href="wg21.tartanllama.xyz/deducing-this">wg21.tartanllama.xyz/deducing-this</a>
+     <dd><a class="u-url" href="http://wg21.link/P0847R0">http://wg21.link/P0847R0</a>
      <dt>Authors:
      <dd>
       <dd class="editor p-author h-card vcard"><span class="p-name fn">Gašper Ažman</span> (<span class="p-org org">gasper dot azman at gmail dot com</span>)
      <dd>
+      <dd class="editor p-author h-card vcard"><span class="p-name fn">Simon Brand</span> (<span class="p-org org">simon at codeplay dot com</span>)
+     <dd>
       <dd class="editor p-author h-card vcard"><span class="p-name fn">Ben Deane</span> (<span class="p-org org">ben at elbeno dot com</span>)
      <dd>
       <dd class="editor p-author h-card vcard"><span class="p-name fn">Barry Revzin</span> (<span class="p-org org">barry dot revzin at gmail dot com</span>)
-     <dd>
-      <dd class="editor p-author h-card vcard"><span class="p-name fn">Simon Brand</span> (<span class="p-org org">simon at codeplay dot com</span>)
      <dt>Audience:
      <dd>EWG
      <dt>Project:
@@ -1510,7 +1510,7 @@ pre .property::before, pre .property::after {
   <span class="c1">// ...</span>
 <span class="c1"></span><span class="p">};</span>
 </pre>
-   <p>Neither the duplication or the delegation via <code class="highlight"><span class="k">const_cast</span></code> are arguably great solutions, but they work.</p>
+   <p>Arguably, neither the duplication or the delegation via <code class="highlight"><span class="k">const_cast</span></code> are great solutions, but they work.</p>
    <p>In C++11, member functions acquired a new axis to specialize on: ref-qualifiers. Now, instead of potentially needing two overloads of a single member function, we might need four: <code class="highlight"><span class="o">&amp;</span></code>, <code class="highlight"><span class="k">const</span><span class="o">&amp;</span></code>, <code class="highlight"><span class="o">&amp;&amp;</span></code>, or <code class="highlight"><span class="k">const</span><span class="o">&amp;&amp;</span></code>. We have three approaches to deal with this: we implement the same member four times, we can have three of the overloads delegate to the fourth, or we can have all four delegate to a helper, private static member function. One example might be the overload set for <code class="highlight"><span class="n">optional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">>::</span><span class="n">value</span><span class="p">()</span></code>. The way to implement it would be something like:</p>
    <table>
     <tbody>
@@ -1660,7 +1660,7 @@ pre .property::before, pre .property::after {
    <p>We believe that the ability to write <em>cv-ref qualifier</em>-aware member functions without duplication will improve code maintainability, decrease the likelihood of bugs, and allow users to write fast, correct code more easily.</p>
    <p>What follows is a description of how explicit object parameters affect all the important language constructs: name lookup, type deduction, overload resolution, and so forth.</p>
    <h3 class="heading settled" data-level="2.1" id="name-lookup-candidate-functions"><span class="secno">2.1. </span><span class="content">Name lookup: candidate functions</span><a class="self-link" href="#name-lookup-candidate-functions"></a></h3>
-   <p>Today, when either invoking a named function or an operator (including the call operator) on an object of class type, name lookup will include both static and non-static member functions found by regular class lookup. Non-static member functions are treated as if there were an implicit object parameter whose type is an lvalue or rvalue reference to <em>cv</em> <code class="highlight"><span class="n">X</span></code> (where the reference and <em>cv</em> qualifiers are determined based on the function’s qualifiers) which binds to the object on which the function was invoked. For static member functions, the implicit object parameter is effectively discarded, so will not be mentioned further.</p>
+   <p>Today, when either invoking a named function or an operator (including the call operator) on an object of class type, name lookup will include both static and non-static member functions found by regular class lookup. Non-static member functions are treated as if there were an implicit object parameter whose type is an lvalue or rvalue reference to <em>cv</em> <code class="highlight"><span class="n">X</span></code> (where the reference and <em>cv</em> qualifiers are determined based on the function’s qualifiers) which binds to the object on which the function was invoked. For static member functions, the implicit object parameter is effectively discarded, so they will not be mentioned further.</p>
    <p>For non-static member functions with the new <strong>explicit</strong> object parameter, lookup will work the same way as other member functions today, except rather than implicitly determining the type of the object parameter based on the <em>cv</em>- and <em>ref</em>-qualifiers of the member function, these are set by the parameter itself. The following examples illustrate this concept. Note that the explicit object parameter does not need to be named:</p>
    <table>
     <tbody>
@@ -1779,7 +1779,7 @@ pre .property::before, pre .property::after {
     <span class="kt">double</span> <span class="n">i</span> <span class="o">=</span> <span class="mf">3.14</span><span class="p">;</span>
 <span class="p">};</span>
 </pre>
-   <p>Consider invoking each of these functions with an lvalue of type <code class="highlight"><span class="n">D</span></code>. We have no interest in changing template deduction rules, which means that <code class="highlight"><span class="n">Self</span></code> in each case will be <code class="highlight"><span class="n">D</span><span class="o">&amp;</span></code>. We have several options:</p>
+   <p>Consider invoking each of these functions with an lvalue of type <code class="highlight"><span class="n">D</span></code>. We have no interest in changing template deduction rules, which means that <code class="highlight"><span class="n">Self</span></code> in each case will be <code class="highlight"><span class="n">D</span><span class="o">&amp;</span></code>. The design space consists of the following alternatives:</p>
    <ol>
     <li data-md="">
      <p><code class="highlight"><span class="k">this</span></code> is a <code class="highlight"><span class="n">B</span><span class="o">*</span></code> (non-<code class="highlight"><span class="k">const</span></code> because the explicit object parameter is non-<code class="highlight"><span class="k">const</span></code>), unqualified lookup looks in <code class="highlight"><span class="n">B</span></code>'s scope first. This means that <code class="highlight"><span class="n">f1</span></code> returns an <code class="highlight"><span class="kt">int</span><span class="o">&amp;</span></code> (to <code class="highlight"><span class="n">B</span><span class="o">::</span><span class="n">i</span></code>) and <code class="highlight"><span class="n">f2</span></code> returns an <code class="highlight"><span class="kt">int</span><span class="o">&amp;</span></code>. <code class="highlight"><span class="n">f3</span></code> is ill-formed, because <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;></span></code> takes a <code class="highlight"><span class="n">D</span><span class="o">&amp;</span></code> and we’re passing in a <code class="highlight"><span class="n">B</span><span class="o">&amp;</span></code>, which is not a conversion that can be done implicitly. <code class="highlight"><span class="n">f4</span></code> returns a <code class="highlight"><span class="kt">double</span><span class="o">&amp;</span></code> to <code class="highlight"><span class="n">D</span><span class="o">::</span><span class="n">i</span></code>, because while <code class="highlight"><span class="o">*</span><span class="k">this</span></code> is a <code class="highlight"><span class="n">B</span></code>, <code class="highlight"><span class="n">self</span></code> actually is the object parameter, hence is a <code class="highlight"><span class="n">D</span></code>.</p>
@@ -1848,7 +1848,7 @@ pre .property::before, pre .property::after {
    <p>The only one that does not have such a syntax is the pass-by-value method, all others have pre-existing signatures that do just fine.</p>
    <p>We are asking for suggestions for syntax for these function pointers. We give our first pass here:</p>
 <pre class="highlight"><span class="k">struct</span> <span class="n">Z</span> <span class="p">{</span>
-  <span class="c1">// same as &lt;code data-opaque>int f(int a, int b) const&amp;amp;;&lt;/code></span>
+  <span class="c1">// same as int f(int a, int b) const&amp;;</span>
 <span class="c1"></span>  <span class="kt">int</span> <span class="n">f</span><span class="p">(</span><span class="n">Z</span> <span class="k">const</span><span class="o">&amp;</span> <span class="k">this</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">);</span>
 
   <span class="kt">int</span> <span class="nf">g</span><span class="p">(</span><span class="n">Z</span> <span class="k">this</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">);</span>
@@ -1877,7 +1877,7 @@ pre .property::before, pre .property::after {
    <h3 class="heading settled" data-level="2.9" id="can-static-member-functions-have-a-this-parameter"><span class="secno">2.9. </span><span class="content">Can <code class="highlight"><span class="k">static</span></code> member functions have a <code class="highlight"><span class="k">this</span></code> parameter?</span><a class="self-link" href="#can-static-member-functions-have-a-this-parameter"></a></h3>
    <p>No. Static member functions currently do not have an implicit <code class="highlight"><span class="k">this</span></code> parameter, and therefore have no reason to have an explicit one.</p>
    <h3 class="heading settled" data-level="2.10" id="interplays-with-capturing-this-and-this-in-lambdas"><span class="secno">2.10. </span><span class="content">Interplays with capturing <code class="highlight"><span class="p">[</span><span class="k">this</span><span class="p">]</span></code> and <code class="highlight"><span class="p">[</span><span class="o">*</span><span class="k">this</span><span class="p">]</span></code> in lambdas</span><a class="self-link" href="#interplays-with-capturing-this-and-this-in-lambdas"></a></h3>
-   <p><code class="highlight"><span class="k">this</span></code> just designates the explicit object parameter. It does not, in any way, change the meaning of <code class="highlight"><span class="k">this</span></code> in the body of the lambda.</p>
+   <p>In the function parameter list, <code class="highlight"><span class="k">this</span></code> just designates the explicit object parameter. It does not, in any way, change the meaning of <code class="highlight"><span class="k">this</span></code> in the body of the lambda.</p>
    <table>
     <tbody>
      <tr>
@@ -1911,7 +1911,7 @@ pre .property::before, pre .property::after {
 <span class="p">};</span>
 </pre>
    </table>
-   <p>If other language features play with what <code class="highlight"><span class="k">this</span></code> means, they are completely orthogonal and do not have interplays with this proposal. However, it should be obvious that developers have a great potential for introducing hard-to-read code if they are at all changing the meaning of <code class="highlight"><span class="k">this</span></code> in function bodies, especially in conjunction with this proposal.</p>
+   <p>If other language features play with what <code class="highlight"><span class="k">this</span></code> means, they are completely orthogonal and do not have interplays with this proposal. However, it should be obvious that developers have great potential for introducing hard-to-read code if they are at all changing the meaning of <code class="highlight"><span class="k">this</span></code> in function bodies, especially in conjunction with this proposal.</p>
    <h3 class="heading settled" data-level="2.11" id="translating-code-to-use-explicit-object-parameters"><span class="secno">2.11. </span><span class="content">Translating code to use explicit object parameters</span><a class="self-link" href="#translating-code-to-use-explicit-object-parameters"></a></h3>
    <p>The most common qualifier overload sets for member functions are:</p>
    <ol>
@@ -2287,12 +2287,12 @@ pre .property::before, pre .property::after {
     <span class="p">}</span>
 <span class="p">};</span>
 
-<span class="k">struct</span> <span class="nl">some_type</span> <span class="p">:</span> <span class="n">add_postfix_increment</span><span class="o">&lt;</span><span class="n">some_Type</span><span class="o">></span> <span class="p">{</span>
+<span class="k">struct</span> <span class="nl">some_type</span> <span class="p">:</span> <span class="n">add_postfix_increment</span><span class="o">&lt;</span><span class="n">some_type</span><span class="o">></span> <span class="p">{</span>
     <span class="n">some_type</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">++</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
 <span class="p">};</span>
 </pre>
       <td>
-<pre class="highlight"><span class="k">struct</span> <span class="n">add_postifx_increment</span> <span class="p">{</span>
+<pre class="highlight"><span class="k">struct</span> <span class="n">add_postfix_increment</span> <span class="p">{</span>
     <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
     <span class="n">Self</span> <span class="k">operator</span><span class="o">++</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">Self</span> <span class="n">tmp</span><span class="p">(</span><span class="n">self</span><span class="p">);</span>
@@ -2318,7 +2318,7 @@ pre .property::before, pre .property::after {
     <span class="c1">// ...</span>
 <span class="c1"></span>    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span> <span class="n">Args</span><span class="o">></span>
     <span class="k">auto</span> <span class="k">operator</span><span class="p">()(</span><span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="p">)</span> <span class="o">&amp;</span>
-        <span class="o">-></span> <span class="k">decltype</span><span class="p">(</span><span class="o">!</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">Args</span><span class="p">...</span><span class="o">>></span><span class="p">())</span>'
+        <span class="o">-></span> <span class="k">decltype</span><span class="p">(</span><span class="o">!</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">Args</span><span class="p">...</span><span class="o">>></span><span class="p">());</span>
 
     <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span> <span class="n">Args</span><span class="o">></span>
     <span class="k">auto</span> <span class="k">operator</span><span class="p">()(</span><span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span>
@@ -2356,7 +2356,14 @@ pre .property::before, pre .property::after {
 <span class="p">};</span>
 
 <span class="n">std</span><span class="o">::</span><span class="n">not_fn</span><span class="p">(</span><span class="n">unfriendly</span><span class="p">{})(</span><span class="mi">1</span><span class="p">);</span> <span class="c1">// static assert!</span>
-<span class="c1"></span><span class="n">std</span><span class="o">::</span><span class="n">not_fn</span><span class="p">(</span><span class="n">fun</span><span class="p">{})();</span>         <span class="c1">// ok!? Returns false</span>
+<span class="c1"></span>                              <span class="c1">// even though the non-const overload is viable and would be the best</span>
+<span class="c1"></span>                              <span class="c1">// match, during overload resolution, both overloads of unfriendly have</span>
+<span class="c1"></span>                              <span class="c1">// to be instantiated - and the second one is a hard compile error.</span>
+<span class="c1"></span>
+<span class="n">std</span><span class="o">::</span><span class="n">not_fn</span><span class="p">(</span><span class="n">fun</span><span class="p">{})();</span>         <span class="c1">// ok!? Returns false</span>
+<span class="c1"></span>                              <span class="c1">// even though we want the non-const overload to be deleted, the const</span>
+<span class="c1"></span>                              <span class="c1">// overload of the call_wrapper ends up being viable - and the only viable</span>
+<span class="c1"></span>                              <span class="c1">// candidate.</span>
 </pre>
    <p>Gracefully handling SFINAE-unfriendly callables is <strong>not solvable</strong> in C++ today. Preventing fallback can be solved by the addition of yet another four overloads, so that each of the four <em>cv</em>/ref-qualifiers leads to a pair of overloads: one enabled and one <code class="highlight"><span class="n">deleted</span></code>.</p>
    <p>This proposal solves both problems by simply allowing <code class="highlight"><span class="k">this</span></code> to be deduced. The following is a complete implementation of <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">not_fn</span></code>:</p>
@@ -2380,7 +2387,9 @@ pre .property::before, pre .property::after {
 <span class="n">not_fn</span><span class="p">(</span><span class="n">unfriendly</span><span class="p">{})(</span><span class="mi">1</span><span class="p">);</span> <span class="c1">// ok</span>
 <span class="c1"></span><span class="n">not_fn</span><span class="p">(</span><span class="n">fun</span><span class="p">{})();</span>         <span class="c1">// error</span>
 </pre>
-   <p>Here, there is only one overload with everything deduced together, with either <code class="highlight"><span class="n">Self</span> <span class="o">=</span> <span class="n">fun</span></code> or <code class="highlight"><span class="n">Self</span> <span class="o">=</span> <span class="n">poison</span></code> as appropriate. As a result, this singular overload then has precisely the desired behavior: working, for <code class="highlight"><span class="n">unfriendly</span></code>, and not working, for <code class="highlight"><span class="n">fun</span></code>.</p>
+   <p>Here, there is only one overload with everything deduced together. The first example now works correctly. <code class="highlight"><span class="n">Self</span></code> gets deduced as <code class="highlight"><span class="n">call_wrapper</span><span class="o">&lt;</span><span class="n">unfriendly</span><span class="o">></span></code>, and the one <code class="highlight"><span class="k">operator</span><span class="p">()</span></code> will only consider <code class="highlight"><span class="n">unfriendly</span></code>'s non-<code class="highlight"><span class="k">const</span></code> call operator. The <code class="highlight"><span class="k">const</span></code> one is simply never considered, so does not have an opportunity to cause problems. The call works.</p>
+   <p>The second example now fails correctly. Previously, we had four candidates: the two non-<code class="highlight"><span class="k">const</span></code> ones were removed from the overload set due to <code class="highlight"><span class="n">fun</span></code>'s non-<code class="highlight"><span class="k">const</span></code> call operator being <code class="highlight"><span class="k">delete</span></code>d, and the two <code class="highlight"><span class="k">const</span></code> ones which were viable. But now, we only have one candidate. <code class="highlight"><span class="n">Self</span></code> gets deduced as <code class="highlight"><span class="n">call_wrapper</span><span class="o">&lt;</span><span class="n">fun</span><span class="o">></span></code>, which requires <code class="highlight"><span class="n">fun</span></code>'s non-<code class="highlight"><span class="k">const</span></code> call operator to be well-formed. Since it is not, the call is an error. There is no opportunity for fallback since there is only one overload ever considered.</p>
+   <p>As a result, this singular overload then has precisely the desired behavior: working, for <code class="highlight"><span class="n">unfriendly</span></code>, and not working, for <code class="highlight"><span class="n">fun</span></code>.</p>
    <h2 class="heading settled" data-level="4" id="acknowledgements"><span class="secno">4. </span><span class="content">Acknowledgements</span><a class="self-link" href="#acknowledgements"></a></h2>
    <p>The authors would like to thank:</p>
    <ul>

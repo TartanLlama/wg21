@@ -1,13 +1,13 @@
 <pre class='metadata'>
 Title: Deducing this
 Status: P
-ED: wg21.tartanllama.xyz/deducing-this
+ED: http://wg21.link/P0847R0
 Shortname: P0847
 Level: 0
 Editor: Gašper Ažman, gasper dot azman at gmail dot com
+Editor: Simon Brand, simon at codeplay dot com
 Editor: Ben Deane, ben at elbeno dot com
 Editor: Barry Revzin, barry dot revzin at gmail dot com
-Editor: Simon Brand, simon at codeplay dot com
 Group: wg21
 Audience: EWG
 Markup Shorthands: markdown yes
