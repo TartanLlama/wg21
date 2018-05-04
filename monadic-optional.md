@@ -3,7 +3,7 @@ Title: Monadic operations for std::optional
 Status: P
 ED: wg21.tartanllama.xyz/monadic-optional
 Shortname: p0798
-Level: 0
+Level: 1
 Editor: Simon Brand, simon@codeplay.com
 Abstract: std::optional will be a very important vocabulary type in C++17 and up. Some uses of it can be very verbose and would benefit from operations which allow functional composition. I propose adding map, and_then, and or_else member functions to std::optional to support this monadic style of programming.
 Group: wg21
@@ -13,6 +13,10 @@ Default Highlight: C++
 Line Numbers: yes
 </pre>
 
+# Changes from r0
+
+- More notes on P0650
+- Discussion about mapping of functions returning `void`
 
 # Motivation
 
@@ -119,8 +123,6 @@ class optional {
 ```
 
 It takes any callable object (like a function). If the `optional` does not have a value stored, then an empty optional is returned. Otherwise, the given function is called with the stored value as an argument, and the return value is returned inside an `optional`.
-
-The function object *may* return `void`, in which case the returned type will be `std::optional<std::monostate>`.
 
 If you come from a functional programming or category theory background, you may recognise this as a functor map.
 
@@ -232,6 +234,16 @@ Rust has an `Option` class, and uses the same names as are proposed in this pape
 
 # Considerations
 
+## Mapping functions returning `void`
+
+There are two main options for supporting `void` returning functions for `map`. One is to return `std::optional<std::monostate>` (or some other unit type) instead of `std::optional<void>`. Another option is to add a specialization of `std::optional` for `void`. This proposal currently doesn't suggest a solution, although the former is easier to support. This functionality can be desirable since it allows chaining functions which are used purely for side effects.
+
+```
+get_optional()          // returns std::optional<T>
+  .map(print_value)     // returns std::optional<void>
+  .map(notify_success); // Is only called when get_optional returned a value
+```
+
 ## More functions
 
 Rust's [Option](https://doc.rust-lang.org/std/option/enum.Option.html) class provides a lot more than `map`, `and_then` and `or_else`. If the idea to add these is received favourably, then we can think about what other additions we may want to make.
@@ -326,8 +338,8 @@ There is a proposal for adding a [general monadic interface](http://www.open-std
 ```
 std::optional<int> get_cute_cat(const image& img) {
     return
-      monad::map(
-        monad::map(
+      functor::map(
+        functor::map(
           monad::bind(
             monad::bind(crop_to_cat(img),
               add_bow_tie),
@@ -341,12 +353,24 @@ My proposal is not necessarily an alternative to this proposal; compatibility be
 
 If `do` notation or [unified call syntax](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0301r1.html) is accepted, then my proposal may not be necessary, as use of the generic monadic functionality would allow the same or similarly concise syntax.
 
+Another option would be to use a ranges-style interface for the general monadic interface:
+
+```
+std::optional<int> get_cute_cat(const image& img) {
+    return crop_to_cat(img)
+         | monad::bind(add_bow_tie)
+         | monad::bind(make_eyes_sparkle)
+         | functor::map(make_smaller)
+         | functor::map(add_rainbow);
+}
+```
+
 Interaction with other proposals
 --------------------------------
 
 There is a proposal for [std::expected](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0323r2.pdf) which would benefit from many of these same ideas. If the idea to add monadic interfaces to standard library classes on a case-by-case basis is chosen rather than a unified non-member function interface, then compatibility between this proposal and the `std::expected` one should be maintained.
 
-Mapping functions which return `void` is supported, but is a pain to implement since `void` is not a regular type. If the [Regular Void](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0146r1.html) proposal was accepted, implementation would be simpler and the results of the operation would conform to users expectations better (i.e. return `std::optional<void>` instead of `std::optional<std::monostate>`).
+Mapping functions which return `void` can be supported, but is a pain to implement since `void` is not a regular type. If the [Regular Void](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0146r1.html) proposal was accepted, implementation would be simpler and the results of the operation would conform to users' expectations better.
 
 Any proposals which make lambdas or overload sets easier to write and pass around will greatly improve this proposal. In particular, proposals for [lift operators](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3617.htm) and [abbreviated lambdas](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0573r0.html) would ensure that the clean style is preserved in the face of many anonymous functions and overloads.
 
