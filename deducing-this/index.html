@@ -2,7 +2,7 @@
  <head>
   <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
-  <title>p0847R0: Deducing this</title>
+  <title>p0847r1: Deducing this</title>
 <style data-fill-with="stylesheet">/******************************************************************************
  *                   Style sheet for the W3C specifications                   *
  *
@@ -1215,10 +1215,10 @@ Possible extra rowspan handling
     table {
       border-collapse: collapse;
     }
-  </style>
-  <meta content="Bikeshed version 405e5d97c9744a2182892308d7a95a41731f9220" name="generator">
-  <link href="http://wg21.link/P0847R0" rel="canonical">
-  <meta content="12158f003de6009123008b1d8f553055615eb358" name="document-revision">
+    </style>
+  <meta content="Bikeshed version 0d6a1c7475b7bb2485f411c7e73d9990fd0cfef5" name="generator">
+  <link href="http://wg21.link/P0847" rel="canonical">
+  <meta content="15615fa8998817aa6e07e339783293972267c892" name="document-revision">
 <style>/* style-md-lists */
 
 /* This is a weird hack for me not yet following the commonmark spec
@@ -1427,12 +1427,12 @@ pre .property::before, pre .property::after {
  <body class="h-entry">
   <div class="head">
    <p data-fill-with="logo"></p>
-   <h1 class="p-name no-ref" id="title">p0847R0<br>Deducing this</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Published Proposal, <time class="dt-updated" datetime="2018-02-12">12 February 2018</time></span></h2>
+   <h1 class="p-name no-ref" id="title">p0847r1<br>Deducing this</h1>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Published Proposal, <time class="dt-updated" datetime="2018-03-05">5 March 2018</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
-     <dd><a class="u-url" href="http://wg21.link/P0847R0">http://wg21.link/P0847R0</a>
+     <dd><a class="u-url" href="http://wg21.link/P0847">http://wg21.link/P0847</a>
      <dt>Authors:
      <dd>
       <dd class="editor p-author h-card vcard"><span class="p-name fn">Gašper Ažman</span> (<span class="p-org org">gasper dot azman at gmail dot com</span>)
@@ -1465,16 +1465,15 @@ pre .property::before, pre .property::after {
       <li><a href="#name-lookup-candidate-functions"><span class="secno">2.1</span> <span class="content">Name lookup: candidate functions</span></a>
       <li><a href="#type-deduction"><span class="secno">2.2</span> <span class="content">Type deduction</span></a>
       <li><a href="#name-lookup-within-member-functions-with-explicit-object-parameters"><span class="secno">2.3</span> <span class="content">Name lookup: within member functions with explicit object parameters</span></a>
-      <li><a href="#by-value-explicit-object-parameters"><span class="secno">2.4</span> <span class="content">By-value explicit object parameters</span></a>
-      <li><a href="#writing-the-function-pointer-types-for-such-functions"><span class="secno">2.5</span> <span class="content">Writing the function pointer types for such functions</span></a>
-      <li><a href="#teachability-implications"><span class="secno">2.6</span> <span class="content">Teachability Implications</span></a>
-      <li><a href="#abi-implications-for-stdfunction-and-related"><span class="secno">2.7</span> <span class="content">ABI implications for <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">function</span></code> and related</span></a>
-      <li><a href="#virtual-and-this-as-value"><span class="secno">2.8</span> <span class="content"><code class="highlight"><span class="k">virtual</span></code> and <code class="highlight"><span class="k">this</span></code> as value</span></a>
-      <li><a href="#can-static-member-functions-have-a-this-parameter"><span class="secno">2.9</span> <span class="content">Can <code class="highlight"><span class="k">static</span></code> member functions have a <code class="highlight"><span class="k">this</span></code> parameter?</span></a>
-      <li><a href="#interplays-with-capturing-this-and-this-in-lambdas"><span class="secno">2.10</span> <span class="content">Interplays with capturing <code class="highlight"><span class="p">[</span><span class="k">this</span><span class="p">]</span></code> and <code class="highlight"><span class="p">[</span><span class="o">*</span><span class="k">this</span><span class="p">]</span></code> in lambdas</span></a>
-      <li><a href="#translating-code-to-use-explicit-object-parameters"><span class="secno">2.11</span> <span class="content">Translating code to use explicit object parameters</span></a>
-      <li><a href="#alternative-syntax"><span class="secno">2.12</span> <span class="content">Alternative syntax</span></a>
-      <li><a href="#unified-function-call-syntax"><span class="secno">2.13</span> <span class="content">Unified Function Call Syntax</span></a>
+      <li><a href="#writing-the-function-pointer-types-for-such-functions"><span class="secno">2.4</span> <span class="content">Writing the function pointer types for such functions</span></a>
+      <li><a href="#teachability-implications"><span class="secno">2.5</span> <span class="content">Teachability Implications</span></a>
+      <li><a href="#abi-implications-for-stdfunction-and-related"><span class="secno">2.6</span> <span class="content">ABI implications for <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">function</span></code> and related</span></a>
+      <li><a href="#virtual-and-this-as-value"><span class="secno">2.7</span> <span class="content"><code class="highlight"><span class="k">virtual</span></code> and <code class="highlight"><span class="k">this</span></code> as value</span></a>
+      <li><a href="#can-static-member-functions-have-a-this-parameter"><span class="secno">2.8</span> <span class="content">Can <code class="highlight"><span class="k">static</span></code> member functions have a <code class="highlight"><span class="k">this</span></code> parameter?</span></a>
+      <li><a href="#interplays-with-capturing-this-and-this-in-lambdas"><span class="secno">2.9</span> <span class="content">Interplays with capturing <code class="highlight"><span class="p">[</span><span class="k">this</span><span class="p">]</span></code> and <code class="highlight"><span class="p">[</span><span class="o">*</span><span class="k">this</span><span class="p">]</span></code> in lambdas</span></a>
+      <li><a href="#translating-code-to-use-explicit-object-parameters"><span class="secno">2.10</span> <span class="content">Translating code to use explicit object parameters</span></a>
+      <li><a href="#alternative-syntax"><span class="secno">2.11</span> <span class="content">Alternative syntax</span></a>
+      <li><a href="#unified-function-call-syntax"><span class="secno">2.12</span> <span class="content">Unified Function Call Syntax</span></a>
      </ol>
     <li>
      <a href="#real-world-examples"><span class="secno">3</span> <span class="content">Real-World Examples</span></a>
@@ -1489,7 +1488,8 @@ pre .property::before, pre .property::after {
       <li><a href="#crtp-without-the-c-r-or-even-t"><span class="secno">3.3</span> <span class="content">CRTP, without the C, R, or even T</span></a>
       <li><a href="#sfinae-friendly-callables"><span class="secno">3.4</span> <span class="content">SFINAE-friendly callables</span></a>
      </ol>
-    <li><a href="#acknowledgements"><span class="secno">4</span> <span class="content">Acknowledgements</span></a>
+    <li><a href="#history"><span class="secno">4</span> <span class="content">History</span></a>
+    <li><a href="#acknowledgements"><span class="secno">5</span> <span class="content">Acknowledgements</span></a>
    </ol>
   </nav>
   <main>
@@ -1504,7 +1504,7 @@ pre .property::before, pre .property::after {
 
   <span class="kt">char</span><span class="o">&amp;</span> <span class="k">operator</span><span class="p">[](</span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">position</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="k">const_cast</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&amp;></span><span class="p">(</span>
-      <span class="k">static_cast</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">TextBlock</span><span class="o">&amp;></span><span class="p">(</span><span class="k">this</span><span class="p">)[</span><span class="n">position</span><span class="p">]</span>
+      <span class="k">static_cast</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">TextBlock</span><span class="o">&amp;></span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">)[</span><span class="n">position</span><span class="p">]</span>
     <span class="p">);</span>
   <span class="p">}</span>
   <span class="c1">// ...</span>
@@ -1639,7 +1639,7 @@ pre .property::before, pre .property::after {
    <p>There are many, many cases in code-bases where we need two or four overloads of the same member function for different <code class="highlight"><span class="k">const</span></code>- or ref-qualifiers. More than that, there are likely many cases that a class should have four overloads of a particular member function, but doesn’t simply due to laziness by the developer. We think that there are sufficiently many such cases that they merit a better solution than simply: write it, then write it again, then write it two more times.</p>
    <h2 class="heading settled" data-level="2" id="proposal"><span class="secno">2. </span><span class="content">Proposal</span><a class="self-link" href="#proposal"></a></h2>
    <p>We propose a new way of declaring a member function that will allow for deducing the type and value category of the class instance parameter, while still being invocable as a member function. We introduce a new kind of parameter that can be provided as the first parameter to any member function: an explicit object parameter. The purpose of this parameter is to bind to the implicit object, allowing it to be deduced.</p>
-   <p>An explicit object parameter shall be of the form <code class="highlight"><span class="n">T</span> <span class="p">[</span><span class="k">const</span><span class="p">]</span> <span class="p">[</span><span class="k">volatile</span><span class="p">]</span> <span class="p">[</span><span class="o">&amp;|&amp;&amp;</span><span class="p">]</span> <span class="k">this</span> <span class="o">&lt;</span><span class="n">identifier</span><span class="o">></span></code>, where <code class="highlight"><span class="n">T</span></code> follows the normal rules of type names (e.g. for generic lambdas, it can be <code class="highlight"><span class="k">auto</span></code>), except that it cannot be a pointer type. Member functions with explicit object parameters cannot be <code class="highlight"><span class="k">static</span></code> or have <em>cv</em>- or <em>ref</em>-qualifiers.</p>
+   <p>An explicit object parameter shall be of the form <code class="highlight"><span class="k">this</span> <span class="n">T</span> <span class="p">[</span><span class="k">const</span><span class="p">]</span> <span class="p">[</span><span class="k">volatile</span><span class="p">]</span> <span class="p">[</span><span class="o">&amp;|&amp;&amp;</span><span class="p">]</span> <span class="o">&lt;</span><span class="n">identifier</span><span class="o">></span></code>, where <code class="highlight"><span class="n">T</span></code> follows the normal rules of type names (e.g. for generic lambdas, it can be <code class="highlight"><span class="k">auto</span></code>), except that the parameter must have reference type. Member functions with explicit object parameters cannot be <code class="highlight"><span class="k">static</span></code> or have <em>cv</em>- or <em>ref</em>-qualifiers.</p>
    <p>The explicit object parameter can only be the first parameter of a function. It cannot be used in constructors or destructors.</p>
    <p>This is a strict extension to the language; all existing syntax remains valid.</p>
    <p>For the purposes of this proposal, we assume the existence of two new library functions: a metafunction named <code class="highlight"><span class="n">like</span></code> which applies the <em>cv</em> and <em>ref</em> qualifiers from its first type argument onto its second (such that <code class="highlight"><span class="n">like_t</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&amp;</span><span class="p">,</span> <span class="kt">double</span><span class="o">></span></code> is <code class="highlight"><span class="kt">double</span><span class="o">&amp;</span></code>, <code class="highlight"><span class="n">like_t</span><span class="o">&lt;</span><span class="n">X</span> <span class="k">const</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">Y</span><span class="o">></span></code> is <code class="highlight"><span class="n">Y</span> <span class="k">const</span><span class="o">&amp;&amp;</span></code>, etc.), and a function template named <code class="highlight"><span class="n">forward_like</span></code> which allows you to forward based on the value category of an unrelated type (<code class="highlight"><span class="n">forward_like</span><span class="o">&lt;</span><span class="n">T</span><span class="o">></span><span class="p">(</span><span class="n">u</span><span class="p">)</span></code> is short-hand for <code class="highlight"><span class="n">forward</span><span class="o">&lt;</span><span class="n">like_t</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">U</span><span class="o">>></span><span class="p">(</span><span class="n">u</span><span class="p">)</span></code>). Sample implementations of both can be seen <a href="https://github.com/atomgalaxy/isocpp-template-this/blob/master/forward_like.cpp">here</a>.</p>
@@ -1648,7 +1648,7 @@ pre .property::before, pre .property::after {
 <span class="k">class</span> <span class="nc">optional</span> <span class="p">{</span>
     <span class="c1">// ...</span>
 <span class="c1"></span>    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
-    <span class="k">decltype</span><span class="p">(</span><span class="k">auto</span><span class="p">)</span> <span class="n">value</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">decltype</span><span class="p">(</span><span class="k">auto</span><span class="p">)</span> <span class="n">value</span><span class="p">(</span><span class="k">this</span> <span class="n">Self</span><span class="o">&amp;&amp;</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">o</span><span class="p">.</span><span class="n">has_value</span><span class="p">())</span> <span class="p">{</span>
             <span class="k">return</span> <span class="n">forward_like</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">).</span><span class="n">m_value</span><span class="p">;</span>
         <span class="p">}</span>
@@ -1678,31 +1678,25 @@ pre .property::before, pre .property::after {
 
     <span class="c1">// implicit object has type X&amp;&amp;</span>
 <span class="c1"></span>    <span class="kt">void</span> <span class="nf">bar</span><span class="p">()</span> <span class="o">&amp;&amp;</span><span class="p">;</span>
-
-    <span class="cm">/* ex_baz has no C++17 equivalent */</span>
 <span class="p">};</span>
 </pre>
       <td>
 <pre class="highlight"><span class="k">struct</span> <span class="n">X</span> <span class="p">{</span>
     <span class="c1">// explicit object, named self, has type X&amp;</span>
-<span class="c1"></span>    <span class="kt">void</span> <span class="n">ex_foo</span><span class="p">(</span><span class="n">X</span><span class="o">&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">);</span>
+<span class="c1"></span>    <span class="kt">void</span> <span class="n">ex_foo</span><span class="p">(</span><span class="k">this</span> <span class="n">X</span><span class="o">&amp;</span> <span class="n">self</span><span class="p">);</span>
 
     <span class="c1">// explicit object, named self, has type X const&amp;</span>
-<span class="c1"></span>    <span class="kt">void</span> <span class="nf">ex_foo</span><span class="p">(</span><span class="n">X</span> <span class="k">const</span><span class="o">&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">);</span>
+<span class="c1"></span>    <span class="kt">void</span> <span class="nf">ex_foo</span><span class="p">(</span><span class="k">this</span> <span class="n">X</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">self</span><span class="p">);</span>
 
     <span class="c1">// explicit object, unnamed, has type X&amp;&amp;</span>
-<span class="c1"></span>    <span class="kt">void</span> <span class="nf">ex_bar</span><span class="p">(</span><span class="n">X</span><span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">);</span>
-
-    <span class="c1">// explicit object, unnamed, has type X</span>
-<span class="c1"></span>    <span class="c1">// copied or moved from original object</span>
-<span class="c1"></span>    <span class="kt">void</span> <span class="nf">ex_baz</span><span class="p">(</span><span class="n">X</span> <span class="k">this</span><span class="p">);</span>
+<span class="c1"></span>    <span class="kt">void</span> <span class="nf">ex_bar</span><span class="p">(</span><span class="k">this</span> <span class="n">X</span><span class="o">&amp;&amp;</span><span class="p">);</span>
 <span class="p">};</span>
 </pre>
    </table>
    <p>The overload resolution rules for this new set of candidate functions remains unchanged - we’re simply being explicit rather than implicit about the object parameter. Given a call to <code class="highlight"><span class="n">x</span><span class="p">.</span><span class="n">ex_foo</span><span class="p">()</span></code>, overload resolution would select the first <code class="highlight"><span class="n">ex_foo</span><span class="p">()</span></code> overload if <code class="highlight"><span class="n">x</span></code> isn’t <code class="highlight"><span class="k">const</span></code> and the second if it is.</p>
    <p>Since the first parameter in member functions that have an explicit object parameter binds to the class object on which the member function is being invoked, the first provided argument is used to initialize the second function parameter, if any:</p>
 <pre class="highlight"><span class="k">struct</span> <span class="n">C</span> <span class="p">{</span>
-    <span class="kt">int</span> <span class="n">get</span><span class="p">(</span><span class="n">C</span> <span class="k">const</span><span class="o">&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">,</span> <span class="kt">int</span> <span class="n">i</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="n">get</span><span class="p">(</span><span class="k">this</span> <span class="n">C</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">self</span><span class="p">,</span> <span class="kt">int</span> <span class="n">i</span><span class="p">);</span>
 <span class="p">};</span>
 
 <span class="n">C</span> <span class="n">c</span><span class="p">;</span>
@@ -1713,7 +1707,7 @@ pre .property::before, pre .property::after {
    <p>One of the main motivations of this proposal is to deduce the <em>cv</em>-qualifiers and value category of the class object, so the explicit object parameter needs to be deducible. We do not propose any change in the template deduction rules for member functions with explicit object parameters - it will just be deduced from the class object the same way as any other function parameter:</p>
 <pre class="highlight"><span class="k">struct</span> <span class="n">X</span> <span class="p">{</span>
     <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
-    <span class="kt">void</span> <span class="n">foo</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">,</span> <span class="kt">int</span> <span class="n">i</span><span class="p">);</span>
+    <span class="kt">void</span> <span class="n">foo</span><span class="p">(</span><span class="k">this</span> <span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="n">self</span><span class="p">,</span> <span class="kt">int</span> <span class="n">i</span><span class="p">);</span>
 <span class="p">};</span>
 
 <span class="n">X</span> <span class="n">x</span><span class="p">;</span>
@@ -1725,7 +1719,7 @@ pre .property::before, pre .property::after {
     <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
     <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
-    <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">get</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">get</span><span class="p">(</span><span class="k">this</span> <span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// NB: specifically self.i, not just i or this->i</span>
 <span class="c1"></span>        <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="n">i</span><span class="p">;</span>
     <span class="p">}</span>
@@ -1763,16 +1757,16 @@ pre .property::before, pre .property::after {
     <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
     <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
-    <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">f1</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">i</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">f1</span><span class="p">(</span><span class="k">this</span> <span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">i</span><span class="p">;</span> <span class="p">}</span>
 
     <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
-    <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">f2</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="o">-></span><span class="n">i</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">f2</span><span class="p">(</span><span class="k">this</span> <span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="o">-></span><span class="n">i</span><span class="p">;</span> <span class="p">}</span>
 
     <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
-    <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">f3</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">).</span><span class="n">i</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">f3</span><span class="p">(</span><span class="k">this</span> <span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">).</span><span class="n">i</span><span class="p">;</span> <span class="p">}</span>
 
     <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
-    <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">f4</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="n">self</span><span class="p">).</span><span class="n">i</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">f4</span><span class="p">(</span><span class="k">this</span> <span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="n">self</span><span class="p">).</span><span class="n">i</span><span class="p">;</span> <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="k">struct</span> <span class="nl">D</span> <span class="p">:</span> <span class="n">B</span> <span class="p">{</span>
@@ -1795,7 +1789,7 @@ pre .property::before, pre .property::after {
    <p>The proper way to implement forwarding is to use one of the two hypothetical library functions mentioned earlier:</p>
 <pre class="highlight"><span class="k">struct</span> <span class="n">B</span> <span class="p">{</span>
     <span class="k">template</span> <span class="o">&lt;</span> <span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
-    <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">f3</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">f3</span><span class="p">(</span><span class="k">this</span> <span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">).</span><span class="n">i</span><span class="p">;</span>            <span class="c1">// ok if Self and *this are the same type</span>
 <span class="c1"></span>                                                       <span class="c1">// compile other if Self is a derived type</span>
 <span class="c1"></span>
@@ -1805,39 +1799,7 @@ pre .property::before, pre .property::after {
 <span class="p">};</span>
 </pre>
    <p>The rule that we’re establishing is that <code class="highlight"><span class="k">this</span></code> remains a pointer to the class type of the member function it is used in, and unqualified lookup looks in class scope as usual. Additionally, <code class="highlight"><span class="k">this</span></code> is either a pointer to the explicit object parameter or, in the case of deducing a derived type, one of its base class subobjects.</p>
-   <h3 class="heading settled" data-level="2.4" id="by-value-explicit-object-parameters"><span class="secno">2.4. </span><span class="content">By-value explicit object parameters</span><a class="self-link" href="#by-value-explicit-object-parameters"></a></h3>
-   <p>We think they are a logical extension of the mechanism, and would go a long way towards making member functions as powerful as inline friend functions, with the only difference being the call syntax. One implication of this is that the explicit object parameter would be move-constructed in cases where the object is an rvalue (or constructed in place for prvalues), allowing you to treat chained builder member functions that return a new object uniformly without having to resort to templates.</p>
-   <p>We continue to follow the rule established in the previous section: <code class="highlight"><span class="k">this</span></code> is a pointer to the explicit object parameter or one of its base class subobjects. In the example below, <code class="highlight"><span class="k">this</span> <span class="o">==</span> <span class="o">&amp;</span><span class="n">self</span></code> and all accesses to <code class="highlight"><span class="n">s</span></code> could also be rewritten as <code class="highlight"><span class="k">this</span><span class="o">-></span><span class="n">s</span></code> or <code class="highlight"><span class="n">self</span><span class="p">.</span><span class="n">s</span></code>:</p>
-<pre class="highlight"><span class="k">class</span> <span class="nc">string_builder</span> <span class="p">{</span>
-  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">s</span><span class="p">;</span>
-
-  <span class="k">operator</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="n">string_builder</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
-  <span class="p">}</span>
-
-  <span class="n">string_builder</span> <span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="n">string_builder</span> <span class="k">this</span> <span class="n">self</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">assert</span><span class="p">(</span><span class="n">n</span> <span class="o">></span> <span class="mi">0</span><span class="p">);</span>
-
-    <span class="n">s</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">*</span> <span class="n">n</span><span class="p">);</span>
-    <span class="k">auto</span> <span class="k">const</span> <span class="n">size</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
-    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">s</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="n">self</span><span class="p">;</span>
-  <span class="p">}</span>
-
-  <span class="n">string_builder</span> <span class="n">bop</span><span class="p">(</span><span class="n">string_builder</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">s</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="s">"bop"</span><span class="p">);</span>
-    <span class="k">return</span> <span class="n">self</span><span class="p">;</span>
-  <span class="p">}</span>
-<span class="p">};</span>
-
-<span class="c1">// this is optimally efficient as far as allocations go</span>
-<span class="c1"></span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="k">const</span> <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">string_builder</span><span class="p">{</span><span class="s">"asdf"</span><span class="p">}</span> <span class="o">*</span> <span class="mi">5</span><span class="p">).</span><span class="n">bop</span><span class="p">().</span><span class="n">bop</span><span class="p">();</span>
-</pre>
-   <p>In this example, <code class="highlight"><span class="n">x</span></code> would hold the value <code class="highlight"><span class="s">"asdfasdfasdfasdfasdfbopbop"</span></code>.</p>
-   <p>Of course, implementing this example with templated explicit object parameter member functions would have been slightly more efficient due to also saving on move constructions, but the by-value usage makes for simpler code.</p>
-   <h3 class="heading settled" data-level="2.5" id="writing-the-function-pointer-types-for-such-functions"><span class="secno">2.5. </span><span class="content">Writing the function pointer types for such functions</span><a class="self-link" href="#writing-the-function-pointer-types-for-such-functions"></a></h3>
+   <h3 class="heading settled" data-level="2.4" id="writing-the-function-pointer-types-for-such-functions"><span class="secno">2.4. </span><span class="content">Writing the function pointer types for such functions</span><a class="self-link" href="#writing-the-function-pointer-types-for-such-functions"></a></h3>
    <p>Currently, we write member function pointers like so:</p>
 <pre class="highlight"><span class="k">struct</span> <span class="n">Y</span> <span class="p">{</span>
   <span class="kt">int</span> <span class="n">f</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="k">const</span> <span class="o">&amp;</span><span class="p">;</span>
@@ -1845,38 +1807,29 @@ pre .property::before, pre .property::after {
 <span class="k">static_assert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_same_v</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Y</span><span class="o">::</span><span class="n">f</span><span class="p">),</span> <span class="kt">int</span> <span class="p">(</span><span class="n">Y</span><span class="o">::*</span><span class="p">)(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span> <span class="k">const</span> <span class="o">&amp;></span><span class="p">);</span>
 </pre>
    <p>All the member functions that take references already have a function pointer syntax - they are just alternate ways of writing functions we can already write.</p>
-   <p>The only one that does not have such a syntax is the pass-by-value method, all others have pre-existing signatures that do just fine.</p>
-   <p>We are asking for suggestions for syntax for these function pointers. We give our first pass here:</p>
 <pre class="highlight"><span class="k">struct</span> <span class="n">Z</span> <span class="p">{</span>
   <span class="c1">// same as int f(int a, int b) const&amp;;</span>
-<span class="c1"></span>  <span class="kt">int</span> <span class="n">f</span><span class="p">(</span><span class="n">Z</span> <span class="k">const</span><span class="o">&amp;</span> <span class="k">this</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">);</span>
-
-  <span class="kt">int</span> <span class="nf">g</span><span class="p">(</span><span class="n">Z</span> <span class="k">this</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">);</span>
+<span class="c1"></span>  <span class="kt">int</span> <span class="n">f</span><span class="p">(</span><span class="k">this</span> <span class="n">Z</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">);</span>
 <span class="p">};</span>
 
 <span class="c1">// f is still the same as Y::f</span>
 <span class="c1"></span><span class="k">static_assert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_same_v</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Z</span><span class="o">::</span><span class="n">f</span><span class="p">),</span> <span class="kt">int</span> <span class="p">(</span><span class="n">Z</span><span class="o">::*</span><span class="p">)(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span> <span class="k">const</span> <span class="o">&amp;></span><span class="p">);</span>
-<span class="c1">// but would this alternate syntax make any sense?</span>
-<span class="c1"></span><span class="k">static_assert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_same_v</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Z</span><span class="o">::</span><span class="n">f</span><span class="p">),</span> <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="p">)(</span><span class="n">Z</span><span class="o">::</span><span class="k">const</span><span class="o">&amp;</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span><span class="o">></span><span class="p">);</span>
-<span class="c1">// It allows us to specify the syntax for Z as a pass-by-value member function</span>
-<span class="c1"></span><span class="k">static_assert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_same_v</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Z</span><span class="o">::</span><span class="n">g</span><span class="p">),</span> <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="p">)(</span><span class="n">Z</span><span class="o">::</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span><span class="o">></span><span class="p">);</span>
 </pre>
-   <p>Such an approach unifies, to a degree, the member functions and the rest of the function type spaces, since it communicates not only that the first parameter is special, but also its type and calling convention.</p>
-   <h3 class="heading settled" data-level="2.6" id="teachability-implications"><span class="secno">2.6. </span><span class="content">Teachability Implications</span><a class="self-link" href="#teachability-implications"></a></h3>
-   <p>Using <code class="highlight"><span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span></code> follows existing patterns for dealing with forwarding references.</p>
+   <h3 class="heading settled" data-level="2.5" id="teachability-implications"><span class="secno">2.5. </span><span class="content">Teachability Implications</span><a class="self-link" href="#teachability-implications"></a></h3>
+   <p>Using <code class="highlight"><span class="k">this</span> <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">self</span></code> follows existing patterns for dealing with forwarding references.</p>
    <p>Explicitly naming the object as the <code class="highlight"><span class="k">this</span></code>-designated first parameter fits with many programmers' mental model of the <code class="highlight"><span class="k">this</span></code> pointer being the first parameter to member functions "under the hood" and is comparable to usage in other languages, e.g. Python and Rust.</p>
    <p>This also makes the definition of "<code class="highlight"><span class="k">const</span></code> member function" more obvious, meaning it can more easily be taught to students.</p>
    <p>It also works as a more obvious way to teach how <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">bind</span></code> and <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">function</span></code> work with a member function pointer by making the pointer explicit.</p>
-   <h3 class="heading settled" data-level="2.7" id="abi-implications-for-stdfunction-and-related"><span class="secno">2.7. </span><span class="content">ABI implications for <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">function</span></code> and related</span><a class="self-link" href="#abi-implications-for-stdfunction-and-related"></a></h3>
+   <h3 class="heading settled" data-level="2.6" id="abi-implications-for-stdfunction-and-related"><span class="secno">2.6. </span><span class="content">ABI implications for <code class="highlight"><span class="n">std</span><span class="o">::</span><span class="n">function</span></code> and related</span><a class="self-link" href="#abi-implications-for-stdfunction-and-related"></a></h3>
    <p>If references and pointers do not have the same representation for member functions, this effectively says "for the purposes of the <code class="highlight"><span class="k">this</span></code>-designated first parameter, they do."</p>
    <p>This matters because code written in the "<code class="highlight"><span class="k">this</span></code> is a pointer" syntax with the <code class="highlight"><span class="k">this</span><span class="o">-></span></code> notation needs to be assembly-identical to code written with the <code class="highlight"><span class="n">self</span><span class="p">.</span></code> notation; the two are just different ways to implement a function with the same signature.</p>
-   <h3 class="heading settled" data-level="2.8" id="virtual-and-this-as-value"><span class="secno">2.8. </span><span class="content"><code class="highlight"><span class="k">virtual</span></code> and <code class="highlight"><span class="k">this</span></code> as value</span><a class="self-link" href="#virtual-and-this-as-value"></a></h3>
+   <h3 class="heading settled" data-level="2.7" id="virtual-and-this-as-value"><span class="secno">2.7. </span><span class="content"><code class="highlight"><span class="k">virtual</span></code> and <code class="highlight"><span class="k">this</span></code> as value</span><a class="self-link" href="#virtual-and-this-as-value"></a></h3>
    <p>Virtual member functions are always dispatched based on the type of the object the dot -- or arrow, in case of pointer -- operator is being used on. Once the member function is located, the parameter <code class="highlight"><span class="k">this</span></code> is constructed with the appropriate move or copy constructor and passed as the <code class="highlight"><span class="k">this</span></code> parameter, which might incur slicing.</p>
    <p>Effectively, there is no change from current behavior -- only a slight addition of a new overload that behaves the way a user would expect.</p>
    <p>Virtual member function templates are not allowed in the language today, and this paper does not propose a change from the current behavior for member functions with explicit object parameters either.</p>
-   <h3 class="heading settled" data-level="2.9" id="can-static-member-functions-have-a-this-parameter"><span class="secno">2.9. </span><span class="content">Can <code class="highlight"><span class="k">static</span></code> member functions have a <code class="highlight"><span class="k">this</span></code> parameter?</span><a class="self-link" href="#can-static-member-functions-have-a-this-parameter"></a></h3>
+   <h3 class="heading settled" data-level="2.8" id="can-static-member-functions-have-a-this-parameter"><span class="secno">2.8. </span><span class="content">Can <code class="highlight"><span class="k">static</span></code> member functions have a <code class="highlight"><span class="k">this</span></code> parameter?</span><a class="self-link" href="#can-static-member-functions-have-a-this-parameter"></a></h3>
    <p>No. Static member functions currently do not have an implicit <code class="highlight"><span class="k">this</span></code> parameter, and therefore have no reason to have an explicit one.</p>
-   <h3 class="heading settled" data-level="2.10" id="interplays-with-capturing-this-and-this-in-lambdas"><span class="secno">2.10. </span><span class="content">Interplays with capturing <code class="highlight"><span class="p">[</span><span class="k">this</span><span class="p">]</span></code> and <code class="highlight"><span class="p">[</span><span class="o">*</span><span class="k">this</span><span class="p">]</span></code> in lambdas</span><a class="self-link" href="#interplays-with-capturing-this-and-this-in-lambdas"></a></h3>
+   <h3 class="heading settled" data-level="2.9" id="interplays-with-capturing-this-and-this-in-lambdas"><span class="secno">2.9. </span><span class="content">Interplays with capturing <code class="highlight"><span class="p">[</span><span class="k">this</span><span class="p">]</span></code> and <code class="highlight"><span class="p">[</span><span class="o">*</span><span class="k">this</span><span class="p">]</span></code> in lambdas</span><a class="self-link" href="#interplays-with-capturing-this-and-this-in-lambdas"></a></h3>
    <p>In the function parameter list, <code class="highlight"><span class="k">this</span></code> just designates the explicit object parameter. It does not, in any way, change the meaning of <code class="highlight"><span class="k">this</span></code> in the body of the lambda.</p>
    <table>
     <tbody>
@@ -1903,7 +1856,7 @@ pre .property::before, pre .property::after {
 
     <span class="k">auto</span> <span class="nf">getter</span><span class="p">()</span> <span class="k">const</span>
     <span class="p">{</span>
-        <span class="k">return</span> <span class="p">[</span><span class="o">*</span><span class="k">this</span><span class="p">](</span><span class="k">auto</span> <span class="k">const</span><span class="o">&amp;</span> <span class="k">this</span> <span class="cm">/* self */</span><span class="p">){</span>
+        <span class="k">return</span> <span class="p">[</span><span class="o">*</span><span class="k">this</span><span class="p">](</span><span class="k">this</span> <span class="k">auto</span> <span class="k">const</span><span class="o">&amp;</span> <span class="cm">/* self */</span><span class="p">){</span>
             <span class="k">return</span> <span class="n">x</span>       <span class="c1">// still refers to X::x</span>
 <span class="c1"></span>                <span class="o">+</span> <span class="k">this</span><span class="o">-></span><span class="n">y</span><span class="p">;</span> <span class="c1">// still refers to X::y</span>
 <span class="c1"></span>        <span class="p">};</span>
@@ -1912,7 +1865,7 @@ pre .property::before, pre .property::after {
 </pre>
    </table>
    <p>If other language features play with what <code class="highlight"><span class="k">this</span></code> means, they are completely orthogonal and do not have interplays with this proposal. However, it should be obvious that developers have great potential for introducing hard-to-read code if they are at all changing the meaning of <code class="highlight"><span class="k">this</span></code> in function bodies, especially in conjunction with this proposal.</p>
-   <h3 class="heading settled" data-level="2.11" id="translating-code-to-use-explicit-object-parameters"><span class="secno">2.11. </span><span class="content">Translating code to use explicit object parameters</span><a class="self-link" href="#translating-code-to-use-explicit-object-parameters"></a></h3>
+   <h3 class="heading settled" data-level="2.10" id="translating-code-to-use-explicit-object-parameters"><span class="secno">2.10. </span><span class="content">Translating code to use explicit object parameters</span><a class="self-link" href="#translating-code-to-use-explicit-object-parameters"></a></h3>
    <p>The most common qualifier overload sets for member functions are:</p>
    <ol>
     <li data-md="">
@@ -1953,12 +1906,12 @@ pre .property::before, pre .property::after {
    </table>
    <p>All three of these can be handled by a single perfect-forwarding overload, like this:</p>
 <pre class="highlight"><span class="k">struct</span> <span class="n">foo</span> <span class="p">{</span>
-    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">Self</span><span class="o">></span>
-    <span class="kt">void</span> <span class="n">bar</span> <span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">);</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
+    <span class="kt">void</span> <span class="n">bar</span> <span class="p">(</span><span class="k">this</span> <span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="n">self</span><span class="p">);</span>
 <span class="p">};</span>
 </pre>
    <p>This overload is callable for all <code class="highlight"><span class="k">const</span></code>- and ref-qualified object parameters, just like the above examples. It is also callable for <code class="highlight"><span class="k">volatile</span></code>-qualified objects, so the code is not entirely equivalent; however, the <code class="highlight"><span class="k">volatile</span></code> versions are unlikely to be valid and more likely to be simply left out for the sake of brevity. The only major difference is in the third case, where non-<code class="highlight"><span class="k">const</span></code> lvalue arguments would be non-<code class="highlight"><span class="k">const</span></code> inside the function body, and <code class="highlight"><span class="k">const</span></code> rvalue arguments would be <code class="highlight"><span class="k">const</span><span class="o">&amp;&amp;</span></code> instead of <code class="highlight"><span class="k">const</span><span class="o">&amp;</span></code>. Again, this is unlikely to cause correctness issues unless <code class="highlight"><span class="k">this</span></code> has other member functions called on it which do semantically different things depending on the cv-qualification of <code class="highlight"><span class="k">this</span></code>.</p>
-   <h3 class="heading settled" data-level="2.12" id="alternative-syntax"><span class="secno">2.12. </span><span class="content">Alternative syntax</span><a class="self-link" href="#alternative-syntax"></a></h3>
+   <h3 class="heading settled" data-level="2.11" id="alternative-syntax"><span class="secno">2.11. </span><span class="content">Alternative syntax</span><a class="self-link" href="#alternative-syntax"></a></h3>
    <p>Instead of qualifying the parameter with <code class="highlight"><span class="k">this</span></code>, to mark it as the parameter for deducing <code class="highlight"><span class="k">this</span></code>, we could let the first parameter be <em>named</em> <code class="highlight"><span class="k">this</span></code> instead:</p>
 <pre class="highlight"><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">></span>
 <span class="k">struct</span> <span class="n">X</span> <span class="p">{</span>
@@ -1966,7 +1919,7 @@ pre .property::before, pre .property::after {
 
     <span class="c1">// as proposed</span>
 <span class="c1"></span>    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
-    <span class="k">decltype</span><span class="p">(</span><span class="k">auto</span><span class="p">)</span> <span class="n">foo</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">decltype</span><span class="p">(</span><span class="k">auto</span><span class="p">)</span> <span class="n">foo</span><span class="p">(</span><span class="k">this</span> <span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="n">self</span><span class="p">).</span><span class="n">value</span><span class="p">;</span>
     <span class="p">}</span>
 
@@ -1984,7 +1937,7 @@ pre .property::before, pre .property::after {
 
     <span class="c1">// as proposed</span>
 <span class="c1"></span>    <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
-    <span class="k">decltype</span><span class="p">(</span><span class="k">auto</span><span class="p">)</span> <span class="n">foo</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">decltype</span><span class="p">(</span><span class="k">auto</span><span class="p">)</span> <span class="n">foo</span><span class="p">(</span><span class="k">this</span> <span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="n">self</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="n">self</span><span class="p">).</span><span class="n">value</span><span class="p">;</span>
     <span class="p">}</span>
 
@@ -2001,7 +1954,7 @@ pre .property::before, pre .property::after {
 <span class="p">};</span>
 </pre>
    <p>This has the benefit of not muddying the parameter list, and it keeps the qualifier deduction off to the side where qualifiers usually live.</p>
-   <h3 class="heading settled" data-level="2.13" id="unified-function-call-syntax"><span class="secno">2.13. </span><span class="content">Unified Function Call Syntax</span><a class="self-link" href="#unified-function-call-syntax"></a></h3>
+   <h3 class="heading settled" data-level="2.12" id="unified-function-call-syntax"><span class="secno">2.12. </span><span class="content">Unified Function Call Syntax</span><a class="self-link" href="#unified-function-call-syntax"></a></h3>
    <p>The proposed use of <code class="highlight"><span class="k">this</span></code> as the first parameter seems as if these members functions really had better be written as non-members to begin with, and might suggest that the solution to this problem is really unified function call syntax (UFCS).</p>
    <p>However, several of the motivating examples presented in this proposal are implementations of operators that cannot be implemented as non-members (<code class="highlight"><span class="p">()</span></code>, <code class="highlight"><span class="p">[]</span></code>, <code class="highlight"><span class="o">-></span></code>, and unary <code class="highlight"><span class="o">*</span></code>). UFCS alone would be insufficient. Additionally, the member function overload sets in all of these examples exist as <em>member</em> functions, not free functions, today. Having to take a member function overload set and rewrite it as a non-member (likely <code class="highlight"><span class="k">friend</span></code>ed) free function template is very much changing the intended design of a class to overcome a language hurdle. This proposal contends that it would be more in keeping with programmer intent to allow member functions to stay member functions.</p>
    <h2 class="heading settled" data-level="3" id="real-world-examples"><span class="secno">3. </span><span class="content">Real-World Examples</span><a class="self-link" href="#real-world-examples"></a></h2>
@@ -2036,7 +1989,7 @@ pre .property::before, pre .property::after {
 <pre class="highlight"><span class="k">class</span> <span class="nc">TextBlock</span> <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
   <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
-  <span class="k">auto</span><span class="o">&amp;</span> <span class="k">operator</span><span class="p">[](</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">,</span>
+  <span class="k">auto</span><span class="o">&amp;</span> <span class="k">operator</span><span class="p">[](</span><span class="k">this</span> <span class="n">Self</span><span class="o">&amp;&amp;</span><span class="p">,</span>
                    <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">position</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// ...</span>
 <span class="c1"></span>    <span class="k">return</span> <span class="n">text</span><span class="p">[</span><span class="n">position</span><span class="p">];</span>
@@ -2065,7 +2018,7 @@ pre .property::before, pre .property::after {
 <span class="k">class</span> <span class="nc">optional</span> <span class="p">{</span>
   <span class="c1">// ...</span>
 <span class="c1"></span>  <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
-  <span class="k">constexpr</span> <span class="k">auto</span> <span class="k">operator</span><span class="o">-></span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">constexpr</span> <span class="k">auto</span> <span class="k">operator</span><span class="o">-></span><span class="p">(</span><span class="k">this</span> <span class="n">Self</span><span class="o">&amp;&amp;</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">addressof</span><span class="p">(</span><span class="k">this</span><span class="o">-></span><span class="n">m_value</span><span class="p">);</span>
   <span class="p">}</span>
   <span class="c1">// ...</span>
@@ -2128,12 +2081,12 @@ pre .property::before, pre .property::after {
 <span class="k">class</span> <span class="nc">optional</span> <span class="p">{</span>
   <span class="c1">// ...</span>
 <span class="c1"></span>  <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
-  <span class="k">constexpr</span> <span class="n">like_t</span><span class="o">&lt;</span><span class="n">Self</span><span class="p">,</span> <span class="n">T</span><span class="o">>&amp;&amp;</span> <span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">constexpr</span> <span class="n">like_t</span><span class="o">&lt;</span><span class="n">Self</span><span class="p">,</span> <span class="n">T</span><span class="o">>&amp;&amp;</span> <span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="k">this</span> <span class="n">Self</span><span class="o">&amp;&amp;</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="n">forward_like</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">).</span><span class="n">m_value</span><span class="p">;</span>
   <span class="p">}</span>
 
   <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
-  <span class="k">constexpr</span> <span class="n">like_t</span><span class="o">&lt;</span><span class="n">Self</span><span class="p">,</span> <span class="n">T</span><span class="o">>&amp;&amp;</span> <span class="n">value</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">constexpr</span> <span class="n">like_t</span><span class="o">&lt;</span><span class="n">Self</span><span class="p">,</span> <span class="n">T</span><span class="o">>&amp;&amp;</span> <span class="n">value</span><span class="p">(</span><span class="k">this</span> <span class="n">Self</span><span class="o">&amp;&amp;</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">has_value</span><span class="p">())</span> <span class="p">{</span>
       <span class="k">return</span> <span class="n">forward_like</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">).</span><span class="n">m_value</span><span class="p">;</span>
     <span class="p">}</span>
@@ -2209,7 +2162,7 @@ pre .property::before, pre .property::after {
   <span class="c1">// ...</span>
 <span class="c1"></span>  <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="p">,</span> <span class="k">typename</span> <span class="n">F</span><span class="o">></span>
   <span class="k">constexpr</span> <span class="k">auto</span>
-  <span class="n">and_then</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">,</span> <span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">and_then</span><span class="p">(</span><span class="k">this</span> <span class="n">Self</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">using</span> <span class="n">val</span> <span class="o">=</span> <span class="k">decltype</span><span class="p">((</span>
         <span class="n">forward_like</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">).</span><span class="n">m_value</span><span class="p">));</span>
     <span class="k">using</span> <span class="n">result</span> <span class="o">=</span> <span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">val</span><span class="o">></span><span class="p">;</span>
@@ -2239,7 +2192,7 @@ pre .property::before, pre .property::after {
 <span class="p">};</span>
 
 <span class="c1">// this proposal</span>
-<span class="c1"></span><span class="k">auto</span> <span class="n">fib</span> <span class="o">=</span> <span class="p">[](</span><span class="k">auto</span><span class="o">&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+<span class="c1"></span><span class="k">auto</span> <span class="n">fib</span> <span class="o">=</span> <span class="p">[](</span><span class="k">this</span> <span class="k">auto</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">self</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="k">return</span> <span class="n">n</span><span class="p">;</span>
     <span class="k">return</span> <span class="nf">self</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">self</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">);</span>
 <span class="p">};</span>
@@ -2260,7 +2213,7 @@ pre .property::before, pre .property::after {
 <pre class="highlight"><span class="kt">int</span> <span class="nf">num_leaves</span><span class="p">(</span><span class="n">Tree</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">tree</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">visit</span><span class="p">(</span><span class="n">overload</span><span class="p">(</span>
         <span class="p">[](</span><span class="n">Leaf</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span> <span class="p">},</span>
-        <span class="p">[](</span><span class="k">auto</span> <span class="k">const</span><span class="o">&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">,</span> <span class="n">Node</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">[](</span><span class="k">this</span> <span class="k">auto</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">self</span><span class="p">,</span> <span class="n">Node</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">visit</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">n</span><span class="p">.</span><span class="n">left</span><span class="p">)</span> <span class="o">+</span> <span class="n">std</span><span class="o">::</span><span class="n">visit</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">n</span><span class="p">.</span><span class="n">right</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">),</span> <span class="n">tree</span><span class="p">);</span>
@@ -2294,7 +2247,7 @@ pre .property::before, pre .property::after {
       <td>
 <pre class="highlight"><span class="k">struct</span> <span class="n">add_postfix_increment</span> <span class="p">{</span>
     <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="o">></span>
-    <span class="n">Self</span> <span class="k">operator</span><span class="o">++</span><span class="p">(</span><span class="n">Self</span><span class="o">&amp;</span> <span class="k">this</span> <span class="n">self</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">Self</span> <span class="k">operator</span><span class="o">++</span><span class="p">(</span><span class="k">this</span> <span class="n">Self</span><span class="o">&amp;</span> <span class="n">self</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">Self</span> <span class="n">tmp</span><span class="p">(</span><span class="n">self</span><span class="p">);</span>
         <span class="o">++</span><span class="n">self</span><span class="p">;</span>
         <span class="k">return</span> <span class="n">tmp</span><span class="p">;</span>
@@ -2372,7 +2325,7 @@ pre .property::before, pre .property::after {
     <span class="n">F</span> <span class="n">f</span><span class="p">;</span>
 
     <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Self</span><span class="p">,</span> <span class="k">typename</span><span class="p">...</span> <span class="n">Args</span><span class="o">></span>
-    <span class="k">auto</span> <span class="k">operator</span><span class="p">()(</span><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span>
+    <span class="k">auto</span> <span class="k">operator</span><span class="p">()(</span><span class="k">this</span> <span class="n">Self</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span>
         <span class="o">-></span> <span class="k">decltype</span><span class="p">(</span><span class="o">!</span><span class="n">invoke</span><span class="p">(</span><span class="n">forward_like</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="n">f</span><span class="p">),</span> <span class="n">forward</span><span class="o">&lt;</span><span class="n">Args</span><span class="o">></span><span class="p">(</span><span class="n">args</span><span class="p">)...))</span>
     <span class="p">{</span>
         <span class="k">return</span> <span class="o">!</span><span class="n">invoke</span><span class="p">(</span><span class="n">forward_like</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">></span><span class="p">(</span><span class="n">f</span><span class="p">),</span> <span class="n">forward</span><span class="o">&lt;</span><span class="n">Args</span><span class="o">></span><span class="p">(</span><span class="n">args</span><span class="p">)...);</span>
@@ -2390,7 +2343,9 @@ pre .property::before, pre .property::after {
    <p>Here, there is only one overload with everything deduced together. The first example now works correctly. <code class="highlight"><span class="n">Self</span></code> gets deduced as <code class="highlight"><span class="n">call_wrapper</span><span class="o">&lt;</span><span class="n">unfriendly</span><span class="o">></span></code>, and the one <code class="highlight"><span class="k">operator</span><span class="p">()</span></code> will only consider <code class="highlight"><span class="n">unfriendly</span></code>'s non-<code class="highlight"><span class="k">const</span></code> call operator. The <code class="highlight"><span class="k">const</span></code> one is simply never considered, so does not have an opportunity to cause problems. The call works.</p>
    <p>The second example now fails correctly. Previously, we had four candidates: the two non-<code class="highlight"><span class="k">const</span></code> ones were removed from the overload set due to <code class="highlight"><span class="n">fun</span></code>'s non-<code class="highlight"><span class="k">const</span></code> call operator being <code class="highlight"><span class="k">delete</span></code>d, and the two <code class="highlight"><span class="k">const</span></code> ones which were viable. But now, we only have one candidate. <code class="highlight"><span class="n">Self</span></code> gets deduced as <code class="highlight"><span class="n">call_wrapper</span><span class="o">&lt;</span><span class="n">fun</span><span class="o">></span></code>, which requires <code class="highlight"><span class="n">fun</span></code>'s non-<code class="highlight"><span class="k">const</span></code> call operator to be well-formed. Since it is not, the call is an error. There is no opportunity for fallback since there is only one overload ever considered.</p>
    <p>As a result, this singular overload then has precisely the desired behavior: working, for <code class="highlight"><span class="n">unfriendly</span></code>, and not working, for <code class="highlight"><span class="n">fun</span></code>.</p>
-   <h2 class="heading settled" data-level="4" id="acknowledgements"><span class="secno">4. </span><span class="content">Acknowledgements</span><a class="self-link" href="#acknowledgements"></a></h2>
+   <h2 class="heading settled" data-level="4" id="history"><span class="secno">4. </span><span class="content">History</span><a class="self-link" href="#history"></a></h2>
+   <p><strong>Changes from r0</strong>: The first draft of this proposal used the syntax <code class="highlight"><span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="o">&lt;</span><span class="n">identifier</span><span class="o">></span></code>, we have instead moved the <code class="highlight"><span class="k">this</span></code> keyword up to the front (as <code class="highlight"><span class="k">this</span> <span class="n">Self</span><span class="o">&amp;&amp;</span> <span class="o">&lt;</span><span class="n">identififer</span><span class="o">></span></code>) to make it more immediately visually apparent and to simplify the grammar. Additionally, the ability to take the explicit object parameter _by value_ has been removed. That parameter now must have reference type.</p>
+   <h2 class="heading settled" data-level="5" id="acknowledgements"><span class="secno">5. </span><span class="content">Acknowledgements</span><a class="self-link" href="#acknowledgements"></a></h2>
    <p>The authors would like to thank:</p>
    <ul>
     <li data-md="">
