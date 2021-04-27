@@ -3,15 +3,54 @@ Title: Monadic operations for std::optional
 Status: P
 ED: wg21.tartanllama.xyz/monadic-optional
 Shortname: p0798
-Level: 1
-Editor: Simon Brand, simon@codeplay.com
-Abstract: std::optional will be a very important vocabulary type in C++17 and up. Some uses of it can be very verbose and would benefit from operations which allow functional composition. I propose adding map, and_then, and or_else member functions to std::optional to support this monadic style of programming.
+Level: 6
+Editor: Sy Brand, sybrand@microsoft.com
+Abstract: std::optional is a very important vocabulary type in C++17 and up. Some uses of it can be very verbose and would benefit from operations which allow functional composition. I propose adding map, and_then, and or_else member functions to std::optional to support this monadic style of programming.
 Group: wg21
-Audience: LEWG, SG14
+Audience: LWG
 Markup Shorthands: markdown yes
 Default Highlight: C++
 Line Numbers: yes
 </pre>
+
+# Changes from r5
+
+- Respecify wording in terms of "Equivalent to"
+- Add constraints for all invocables
+- Use `decay_t` for `transform`
+- Remove function bodies from synopsis
+- Make rvalue `or_else` overload require *Cpp17CopyConstructible*
+
+
+# Changes from r4
+
+- Remove non-`const` lvalue and `const` rvalue overloads for `or_else`
+- Remove special-casing of `void` from `or_else`:
+    Mandates: `invoke_result_t<F>` is <span style="background: lightcoral">`void` or</span> convertible to `optional`.
+
+    Effects: If `*this` has a value, returns `*this`. <span style="background: lightcoral">Otherwise, if `invoke_result_t<F>` is `void`, calls `std::forward<F>(f)` and returns `nullopt`.</span> Otherwise, returns `std::forward<F>(f)()`.
+
+    Effects: If `*this` has a value, returns `std::move(*this)`. <span style="background: lightcoral">Otherwise, if `invoke_result_t<F>` is `void`, calls `std::forward<F>(f)` and returns `nullopt`.</span> Otherwise, returns `std::forward<F>(f)()`.
+- Use `remove_cv_ref_t` instead of `decay_t`
+- Add feature test macro
+- Add function bodies to synopsis
+- Formatting changes
+
+# Changes from r3
+- Wording improvements
+
+# Changes from r2
+- Rename `map` to `transform`
+- Remove "Alternative Names" section
+- Address feedback on disallowing function pointers
+- Remove capability for mapping void-returning functions
+- Tighten wording
+- Discuss SFINAE-friendliness
+
+# Changes from r1
+- Add list of programming languages to proposed solution section
+- Change map example code to not take address of stdlib function
+- Update wording to use `std::monostate` on `void`-returning callables
 
 # Changes from r0
 
@@ -92,16 +131,37 @@ std::optional<image> get_cute_cat (const image& img) {
 }
 ```
 
-We've successfully got rid of all the manual checking. We've even improved on the clarity of the non-optional example, which needed to either be read inside-out or split into multiple declarations. All that we need now is an understanding of what `map` and `and_then` do and how to use them.
+We’ve successfully got rid of all the manual checking. We’ve even improved on the clarity of the non-`optional` example, which needed to either be read inside-out or split into multiple declarations.
 
-## `map`
+This is common in other programming languages. Here is a list of programming languages which have a `optional`-like type with a monadic interface or some similar syntactic sugar:
 
-`map` applies a function to the value stored in the optional and returns the result wrapped in an optional. If there is no stored value, then it returns an empty optional.
+- Java: `Optional`
+- Swift: `Optional`
+- Haskell: `Maybe`
+- Rust: `Option`
+- OCaml: `option`
+- Scala: `Option`
+- Agda: `Maybe`
+- Idris: `Maybe`
+- Kotlin: `T?`
+- StandardML: `option`
+- C#: `Nullable`
 
-For example, if you have a `std::optional<std::string>` and you want to get the size of the string if one is available, you could write this:
+Here is a list of programming languages which have a `optional`-like type without a monadic interface or syntactic sugar:
+
+- C++
+- I couldn’t find any others
+
+All that we need now is an understanding of what `transform` and `and_then` do and how to use them.
+
+## `transform`
+
+`transform` is used to apply a function to change the value (and possibly the type) stored in an optional. It applies a function to the value stored in the optional and returns the result wrapped in an optional. If there is no stored value, then it returns an empty optional.
+
+For example, if you have a `std::optional<std::string>` and you want to get a `std::optional<std::size_t>` giving the size of the string if one is available, you could write this:
 
 ```
-std::optional<std::size_t> s = opt_string.map(&std::string::size);
+auto s = opt_string.transform([](auto&& s) { return s.size(); });
 ```
 
 which is somewhat equivalent to:
@@ -112,23 +172,23 @@ if (opt_string) {
 }
 ```
 
-`map` has one overload (in pseudocode for exposition):
+`transform` has one overload (expositional):
 
 ```
 template <class T>
 class optional {
     template <class Return>
-    std::optional<Return> map (function<Return(T)> func);
+    std::optional<Return> transform (function<Return(T)> func);
 };
 ```
 
-It takes any callable object (like a function). If the `optional` does not have a value stored, then an empty optional is returned. Otherwise, the given function is called with the stored value as an argument, and the return value is returned inside an `optional`.
+It takes any invocable. If the optional does not have a value stored, then an empty optional is returned. Otherwise, the given function is called with the stored value as an argument, and the return value is returned inside an optional.
 
 If you come from a functional programming or category theory background, you may recognise this as a functor map.
 
 ## `and_then`
 
-`and_then` is like `map`, but it is used on functions which may not return a value.
+`and_then` is used to compose functions which return `std::optional`.
 
 For example, say you have `std::optional<std::string>` and a function like `std::stoi` which returns a `std::optional<int>` instead of throwing on failure. Rather than manually checking the optional string before calling, you could do this:
 
@@ -144,7 +204,7 @@ if (opt_string) {
 }
 ```
 
-`and_then` has one overload which looks like this:
+`and_then` has one overload which looks like this (again, expositional):
 
 ```
 template <class T>
@@ -154,7 +214,7 @@ class optional {
 };
 ```
 
-It takes any callable object which returns a `std::optional`. If the optional does not have a value stored, then an empty optional is returned. Otherwise, the given function is called with the stored value as an argument, and the return value is returned.
+It takes any callable object which returns a `std::optional`. If the `optional` does not have a value stored, then an empty `optional` is returned. Otherwise, the given function is called with the stored value as an argument, and the return value is returned.
 
 Again, those from an FP background will recognise this as a monadic bind.
 
@@ -183,7 +243,7 @@ get_opt().or_else(opt_throw("get_opt failed"));
 
 ```
 
-It has one overload:
+It has one overload (expositional):
 
 ```
 template <class T>
@@ -214,7 +274,7 @@ Taking the example of `stoi` from earlier, we could carry out mathematical opera
 ```
 std::optional<int> i = opt_string
                        .and_then(stoi)
-                       .map([](auto i) { return i * 2; });
+                       .transform([](auto i) { return i * 2; });
 ```
 
 We can also intersperse our chain with error checking code:
@@ -223,46 +283,84 @@ We can also intersperse our chain with error checking code:
 std::optional<int> i = opt_string
                        .and_then(stoi)
                        .or_else(opt_throw("stoi failed"))
-                       .map([](auto i) { return i * 2; });
+                       .transform([](auto i) { return i * 2; });
 ```
 
 # How other languages handle this
 
-`std::optional` is known as `Maybe` in Haskell and it provides much the same functionality. `map` is in `Functor` and named `fmap`, and `and_then` is in `Monad` and named `>>=` (bind).
+`std::optional` is known as `Maybe` in Haskell and it provides much the same functionality. `transform` is in `Functor` and named `fmap`, and `and_then` is in `Monad` and named `>>=` (bind).
 
 Rust has an `Option` class, and uses the same names as are proposed in this paper. It also provides many additional member functions like `or`, `and`, `map_or_else`.
 
 # Considerations
 
+## Disallowing function pointers
+
+In San Diego, a straw poll on disallowing passing function pointers to the functions proposed was made with the following results:
+
+```
+|SF|F|N|A|SA|
+|3 |6|1|0|1 | 
+```
+
+This poll was carried out with the understanding that some parts of Ranges (in particular `ranges::transform_view`) disallow function pointers. However, this is not the case. From p0896r2:
+
+```
+template<InputRange R, CopyConstructible F>
+requires View<R> && is_object_v<F&&> Invocable<F&,iter_reference_t<iterator_t<R>>>
+class transform_view;
+```
+
+I imagine the confusion comes from `is_object_v<F&&>`, but function pointers are object types. From n4460 (C++17):
+
+> An object type is a (possibly cv-qualiﬁed) type that is not a function type, not a reference type, and not cv void.
+
+As far as I am aware, if we disallowed passing function pointers here then this would be the only place in the standard library which does so. Alongside the issue of consistency, ease-of-use is damaged. For example:
+
+```
+int this_will_never_be_overloaded(double);
+my_optional_double.transform(this_will_never_be_overloaded); //not allowed
+//have to write this instead
+my_optional_double.transform([](double d){ return this_will_never_be_overloaded(d); });
+//or use some sort of macro
+my_optional_double.transform(LIFT(this_will_never_be_overloaded));
+```
+
+For library extensions which are supposed to aid ergonomics and simplify code, this goes in the opposite direction.
+
+The benefit of disallowing function pointers is avoidance of build breakages when a previously non-overloaded function is overloaded. This is not a new issue: it applies to practically every single higher order function in the C++ standard library, including functions in `<algorithm>`, `<numeric>`, and ranges. There are papers in flight to address this issue in other ways (such as p1170), but in the meantime it remains a problem. While I see the desire to avoid this issue, I think the cost of consistency and ease-of-use far outweighs the benefits. As such, this paper still allows function pointers to be passed.
+
 ## Mapping functions returning `void`
 
-There are two main options for supporting `void` returning functions for `map`. One is to return `std::optional<std::monostate>` (or some other unit type) instead of `std::optional<void>`. Another option is to add a specialization of `std::optional` for `void`. This proposal currently doesn't suggest a solution, although the former is easier to support. This functionality can be desirable since it allows chaining functions which are used purely for side effects.
+There are three main options for handling `void`-returning functions for `transform`. The simplest is to disallow it (this is what `boost::optional` does). One is to return `std::optional<std::monostate>` (or some other unit type) instead of `std::optional<void>` (this is what `tl::optional` does). Another option is to add a `std::optional<void>` specialization. This functionality can be desirable since it allows chaining functions which are used purely for side effects.
 
 ```
-get_optional()          // returns std::optional<T>
-  .map(print_value)     // returns std::optional<void>
-  .map(notify_success); // Is only called when get_optional returned a value
+get_optional()                // returns std::optional<T>
+  .transform(print_value)     // returns std::optional<std::monostate>
+  .transform(notify_success); // Is only called when get_optional returned a value
 ```
+
+This proposal disallows mapping void-returning functions.
 
 ## More functions
 
 Rust's [Option](https://doc.rust-lang.org/std/option/enum.Option.html) class provides a lot more than `map`, `and_then` and `or_else`. If the idea to add these is received favourably, then we can think about what other additions we may want to make.
 
-## `map` only
+## `transform` only
 
 It would be possible to merge all of these into a single function which handles all use cases. However, I think this would make the function more difficult to teach and understand.
 
 ## Operator overloading
 
-We could provide operator overloads with the same semantics as the functions. For example, `|` could mean `map`, `>=` `and_then`, and `&` `or_else`. Rewriting the original example gives this:
+We could provide operator overloads with the same semantics as the functions. For example, `|` could mean `transform`, `>=` `and_then`, and `&` `or_else`. Rewriting the original example gives this:
 
 ```
 // original
 crop_to_cat(img)
   .and_then(add_bow_tie)
   .and_then(make_eyes_sparkle)
-  .map(make_smaller)
-  .map(add_rainbow);
+  .transform(make_smaller)
+  .transform(add_rainbow);
 
 // rewritten
 crop_to_cat(img)
@@ -277,7 +375,7 @@ Another option would be `>>` for `and_then`.
 
 ## Applicative Functors
 
-`map` could be overloaded to accept callables wrapped in `std::optionals`. This fits the *applicative functor* concept. It would look like this:
+`transform` could be overloaded to accept callables wrapped in `std::optionals`. This fits the *applicative functor* concept. It would look like this:
 
 ```
 template <class Return>
@@ -286,24 +384,22 @@ std::optional<Return> map (std::optional<function<Return(T)>> func);
 
 This would give functional programmers the set of operations which they may expect from a monadic-style interface. However, I couldn't think of many use-cases of this in C++. If some are found then we could add the extra overload.
 
-## Alternative names
+## SFINAE-friendliness
 
-`map` may confuse users who are more familiar with its use as a data structure, or consider the common array map from other languages to be different from this application. Some other possible names are `then`, `when_value`, `fmap`, `transform`.
-
-Alternative names for `and_then` are `bind`, `compose`, `chain`.
-
-`or_else` could be named `catch_error`, in line with [P0650r0](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0650r0.pdf)
-
-## Overloaded `and_then`
-
-Instead of an additional `or_else` function, `and_then` could be overloaded to take an additional error function:
+`transform` and `and_then` are specified to return `auto`. This makes them not SFINAE-friendly. This is required because of the issue described in [p0826](https://wg21.link/p0826): if the callable which is passed in has an SFINAE-unfriendly call operator template, it could produce a hard error when instantiated in the `const` and non-`const` overloads of `transform` and `and_then` during overload resolution. For example, if `transform` was SFINAE-friendly, the following code would result in a hard error:
 
 ```
-o.and_then(a, []{throw std::runtime_error("oh no");});
+struct foo {
+  void non_const() {}
+};
+
+std::optional<foo> f = foo{};
+auto l = [](auto &&x) { x.non_const(); };
+//error: passing 'const foo' as 'this' argument discards qualifiers
+f.transform(l); 
 ```
 
-The above will throw if `a` returns an empty optional.
-
+If p0847 is accepted and this proposal is rebased on top of it, then this would no longer be an issue, and `transform` and `and_then` could be made SFINAE-friendly.
 
 # Pitfalls
 
@@ -368,6 +464,8 @@ std::optional<int> get_cute_cat(const image& img) {
 Interaction with other proposals
 --------------------------------
 
+[p0847](https://wg21.link/p0847) would ease implementation and solve the issue of SFINAE-friendliness for `transform` and `and_then`.
+
 There is a proposal for [std::expected](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0323r2.pdf) which would benefit from many of these same ideas. If the idea to add monadic interfaces to standard library classes on a case-by-case basis is chosen rather than a unified non-member function interface, then compatibility between this proposal and the `std::expected` one should be maintained.
 
 Mapping functions which return `void` can be supported, but is a pain to implement since `void` is not a regular type. If the [Regular Void](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0146r1.html) proposal was accepted, implementation would be simpler and the results of the operation would conform to users' expectations better.
@@ -383,78 +481,185 @@ This proposal has been implemented [here](https://github.com/TartanLlama/monadic
 
 # Proposed Wording
 
-## New synopsis entry: `[optional.monadic]`, monadic operations
+## Add feature test macro to Table 36 in [support.limits.general]
+<table>
+	<tbody>
+		<tr>
+			<td><b>Macro name</b></td>
+			<td><b>Value</b></td>
+			<td><b>Header(s)</b></td>
+  	</tr>
+    <tr>
+			<td> ... </td><td> ... 	</td><td> ...	</td>
+    </tr>
+    <tr>
+					<td>_­_­cpp_­lib_­memory_­resource
+					</td><td>201603L
+					</td><td>&lt;memory_resource&gt;
+				</td></tr><tr>
+					<td style="background: palegreen;">__cpp_lib_monadic_optional
+					</td><td style="background: palegreen;">201907L
+					</td><td style="background: palegreen;">&lt;optional&gt;
+				</td></tr><tr>
+					<td>__cpp_lib_node_extract
+					</td><td>201606L
+					</td><td>&lt;map&gt; &lt;set&gt; &lt;unordered_map&gt; &lt;unordered_set&gt;
+				</td></tr><tr>
+					<td> ...
+					</td><td> ...
+					</td><td> ...
+		</td></tr></tbody></table>
+
+##  Add declarations for the monadic operations to the synopsis of class template optional in [optional.optional]
 
 ```
-template <class F> constexpr *see below* and_then(F&& f) &;
-template <class F> constexpr *see below* and_then(F&& f) &&;
-template <class F> constexpr *see below* and_then(F&& f) const&;
-template <class F> constexpr *see below* and_then(F&& f) const&&;
-template <class F> constexpr *see below* map(F&& f) &;
-template <class F> constexpr *see below* map(F&& f) &&;
-template <class F> constexpr *see below* map(F&& f) const&;
-template <class F> constexpr *see below* map(F&& f) const&&;
-template <class F> constexpr optional<T> or_else(F &&f) &;
-template <class F> constexpr optional<T> or_else(F &&f) &&;
-template <class F> constexpr optional<T> or_else(F &&f) const&;
-template <class F> constexpr optional<T> or_else(F &&f) const&&;
+//...
+template<class U> constexpr T value_or(U&&) const&;
+template<class U> constexpr T value_or(U&&) &&;
+// [optional.monadic], monadic operations
+template <class F> constexpr auto and_then(F&& f) &;
+template <class F> constexpr auto and_then(F&& f) &&;
+template <class F> constexpr auto and_then(F&& f) const&;
+template <class F> constexpr auto and_then(F&& f) const&&;
+template <class F> constexpr auto transform(F&& f) &;
+template <class F> constexpr auto transform(F&& f) &&;
+template <class F> constexpr auto transform(F&& f) const&;
+template <class F> constexpr auto transform(F&& f) const&&;
+template <class F> constexpr optional or_else(F&& f) &&;
+template <class F> constexpr optional or_else(F&& f) const&;
+// [optional.mod], modifiers
+void reset() noexcept;
+//...
 ```
 
-## New section: Monadic operations `[optional.monadic`]
+## Add new subclause "Monadic operations [optional.monadic]" between [optional.observe] and [optional.mod]
 
 ```
-template <class F> constexpr *see below* and_then(F&& f) &;
-template <class F> constexpr *see below* and_then(F&& f) const&;
+template <class F> constexpr auto and_then(F&& f) &;
+template <class F> constexpr auto and_then(F&& f) const&;
 ```
 
-*Requires*: `std::invoke(std::forward<F>(f), value())` returns a `std::optional<U>` for some `U`.
+>Let `U` be `invoke_result_t<F, decltype(value())>`.
+>
+>*Constraints*: `F` models `invocable<decltype(value())>`.
+>
+>*Mandates*: `remove_cvref_t<U>` is a specialization of `optional`.
+>
+>*Effects*: Equivalent to:
+>
+>```
+>if (*this) {
+>  return invoke(std::forward<F>(f), value()); 
+>} 
+>else {
+>  return remove_cvref_t<U>();
+>}
+>```
 
-*Returns*: Let `U` be the result of `std::invoke(std::forward<F>(f), value())`. Returns a `std::optional<U>`. The return value is empty if `*this` is empty, otherwise the return value of `std::invoke(std::forward<F>(f), value())` is returned.
-
-```
-template <class F> constexpr *see below* and_then(F&& f) &&;
-template <class F> constexpr *see below* and_then(F&& f) const&&;
-```
-
-*Requires*: `std::invoke(std::forward<F>(f), std::move(value()))` returns a `std::optional<U>` for some `U`.
-
-*Returns*: Let `U` be the result of `std::invoke(std::forward<F>(f), std::move(value()))`. Returns a `std::optional<U>`. The return value is empty if `*this` is empty, otherwise the return value of `std::invoke(std::forward<F>(f), std::move(value()))` is returned.
-
-```
-template <class F> constexpr *see below* map(F&& f) &;
-template <class F> constexpr *see below* map(F&& f) const&;
-```
-
-*Returns*: Let `U` be the result of `std::invoke(std::forward<F>(f), value())`. Returns a `std::optional<U>`. The return value is empty if `*this` is empty, otherwise an `optional<U>` is constructed from the return value of `std::invoke(std::forward<F>(f), value())` and is returned.
 
 ```
-template <class F> constexpr *see below* map(F&& f) &&;
-template <class F> constexpr *see below* map(F&& f) const&&;
+template <class F> constexpr auto and_then(F&& f) &&;
+template <class F> constexpr auto and_then(F&& f) const&&;
 ```
 
-*Returns*: Let `U` be the result of `std::invoke(std::forward<F>(f), std::move(value()))`. Returns a `std::optional<U>`. The return value is empty if `*this` is empty, otherwise an `optional<U>` is constructed from the return value of `std::invoke(std::forward<F>(f), std::move(value()))` and is returned.
+>Let `U` be `invoke_result_t<F, decltype(std::move(value()))>`.
+>
+>*Constraints*: `F` models `invocable<decltype(std::move(value()))>`.
+>
+>*Mandates*: `remove_cvref_t<U>` is a specialization of `optional`.
+>
+>*Effects*: Equivalent to:
+>
+>```
+>if (*this) {
+>  return invoke(std::forward<F>(f), std::move(value())); 
+>} 
+>else {
+>  return remove_cvref_t<U>();
+>}
+>```
 
 ```
-template <class F> constexpr optional<T> or_else(F &&f) &;
-template <class F> constexpr optional<T> or_else(F &&f) const&;
+template <class F> constexpr auto transform(F&& f) &;
+template <class F> constexpr auto transform(F&& f) const&;
 ```
 
-*Requires*: `std::invoke_result_t<F>` must be `void` or convertible to `optional<T>`.
-
-*Effects*: If `*this` has a value, returns `*this`. Otherwise, if `f` returns void, calls `std::forward<F>(f)` and returns `std::nullopt`. Otherwise, returns `std::forward<F>(f)()`;
+>Let `U` be `invoke_result_t<F, decltype(value())>`.
+>
+>*Constraints*: `F` models `invocable<decltype(value())>`.
+>
+>*Effects*: Equivalent to:
+>
+>```
+>if (*this) {
+>  return optional<U>(in_place, invoke(std::forward<F>(f), value())); 
+>} 
+>else {
+>  return optional<U>();
+>}
+>```
 
 ```
-template <class F> constexpr optional<T> or_else(F &&f) &&;
-template <class F> constexpr optional<T> or_else(F &&f) const&&;
+template <class F> constexpr auto transform(F&& f) &&;
+template <class F> constexpr auto transform(F&& f) const&&;
 ```
 
-*Requires*: `std::invoke_result_t<F>` must be `void` or convertible to `optional<T>`.
+>Let `U` be `invoke_result_t<F, decltype(std::move(value()))>`.
+>
+>*Constraints*: `F` models `invocable<decltype(std::move(value()))>`.
+>
+>*Effects*: Equivalent to:
+>
+>```
+>if (*this) {
+>  return optional<U>(in_place, invoke(std::forward<F>(f), std::move(value()))); 
+>} 
+>else {
+>  return optional<U>();
+>}
+>```
 
-*Effects*: If `*this` has a value, returns `std::move(*this)`. Otherwise, if `f` returns void, calls `std::forward<F>(f)` and returns `std::nullopt`. Otherwise, returns `std::forward<F>(f)()`;
+```
+template <class F> constexpr optional or_else(F&& f) const&;
+```
+
+>*Constraints*: `F` models `invocable<>`.
+>
+>*Expects*: `T` meets the *Cpp17CopyConstructible* requirements (Table 27).
+>
+>*Effects*: Equivalent to:
+>
+>```
+>if (*this) {
+>  return *this;
+>}
+>else {
+>  return std::forward<F>(f)();
+>}
+>```
+
+```
+template <class F> constexpr optional or_else(F&& f) &&;
+```
+
+>*Constraints*: `F` models `invocable<>`.
+>
+>*Expects*: `T` meets the *Cpp17CopyConstructible* requirements (Table 27).
+>
+>*Effects*: Equivalent to:
+>
+>```
+>if (*this) {
+>  return std::move(*this);
+>}
+>else {
+>  return std::forward<F>(f)();
+>}
+>```
 
 ---------------------------------------
 
 Acknowledgements
 ---------------
 
-Thank you to Michael Wong for representing this paper to the committee. Thanks to Kenneth Benzie, Vittorio Romeo, Jonathan Müller, Adi Shavit, Nicol Bolas, Vicente Escribá and Barry Revzin for review and suggestions.
+Thank you to Michael Wong and Chris Di Bella for representing this paper to the committee. Thanks to Kenneth Benzie, Vittorio Romeo, Jonathan Müller, Adi Shavit, Nicol Bolas, Vicente Escribá, Barry Revzin, Tim Song, and especially Casey Carter for review and suggestions.
